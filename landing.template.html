@@ -909,7 +909,7 @@
           {{#each nav.links}}<a href="{{href}}">{{label}}</a>{{/each}}
         </div>
         <div class="nav-cta">
-          <a href="https://app.duoduobei.com" class="btn btn-primary">{{nav.cta}}</a>
+          <a href="{{links.app}}" class="btn btn-primary">{{nav.cta}}</a>
         </div>
     </div>
   </nav>
@@ -926,7 +926,7 @@
           {{#each hero.caps}}<span class="hero-cap">{{.}}</span>{{/each}}
         </div>
         <div class="hero-actions">
-          <a href="https://app.duoduobei.com" class="btn btn-primary">{{hero.ctaPrimary}}</a>
+          <a href="{{links.app}}" class="btn btn-primary">{{hero.ctaPrimary}}</a>
           <a href="#features" class="btn btn-outline">{{hero.ctaSecondary}}</a>
         </div>
         <p class="hero-note">{{hero.note}}</p>
@@ -1304,8 +1304,8 @@
         {{/each}}
       </div>
       <div class="explore-cta" data-reveal>
-        <a href="https://app.duoduobei.com/temperature" class="btn btn-primary">{{explore.ctaTemperature}}</a>
-        <a href="https://app.duoduobei.com/explore" class="btn btn-outline">{{explore.ctaExplore}}</a>
+        <a href="{{links.temperature}}" class="btn btn-primary">{{explore.ctaTemperature}}</a>
+        <a href="{{links.explore}}" class="btn btn-outline">{{explore.ctaExplore}}</a>
         <p class="explore-note">{{explore.note}}</p>
       </div>
     </div>
@@ -1416,7 +1416,7 @@
       <div class="container" data-reveal>
         <h2>{{cta.title}}</h2>
         <p>{{cta.text}}</p>
-        <a href="https://app.duoduobei.com" class="btn btn-inverted">{{cta.btn}}</a>
+        <a href="{{links.app}}" class="btn btn-inverted">{{cta.btn}}</a>
       </div>
     </section>
 

@@ -6,6 +6,19 @@ brand: 多多贝
 brandSub: 投资账本
 brandBeta: "Beta 预览版"
 
+# 跳转目标唯一可编辑源（B 方案：所有外跳链接收口到此处，模板用 {{links.*}} 渲染）
+links:
+  app: "https://app.duoduobei.com"
+  temperature: "https://app.duoduobei.com/temperature"
+  explore: "https://app.duoduobei.com/explore"
+  home: "https://duoduobei.com"
+  personality: "https://duoduobei.com/personality/"
+  feedback: "https://feedback.duoduobei.com"
+  donate: "https://duoduobei.com/donate/"
+  docsPrivacy: "https://docs.duoduobei.com/privacy/"
+  docsDisclaimer: "https://docs.duoduobei.com/disclaimer/"
+  github: "https://github.com/imoyao"
+
 nav:
   links:
     - { label: 核心能力, href: "#features" }
@@ -298,14 +311,14 @@ footer:
   aboutLinks:
     - { label: 品牌故事, href: "story.html" }
     - { label: 关于我们, href: "about.html" }
-    - { label: 投资人格测试, href: "https://duoduobei.com/personality/" }
-    - { label: GitHub, href: "https://github.com/imoyao" }
-    - { label: 意见反馈, href: "https://feedback.duoduobei.com" }
-    - { label: 隐私政策, href: "https://docs.duoduobei.com/privacy/" }
-    - { label: 免责声明, href: "https://docs.duoduobei.com/disclaimer/" }
-    - { label: 赞赏作者, href: "https://duoduobei.com/donate/" }
+    - { label: 投资人格测试, href: "{{links.personality}}" }
+    - { label: GitHub, href: "{{links.github}}" }
+    - { label: 意见反馈, href: "{{links.feedback}}" }
+    - { label: 隐私政策, href: "{{links.docsPrivacy}}" }
+    - { label: 免责声明, href: "{{links.docsDisclaimer}}" }
+    - { label: 赞赏作者, href: "{{links.donate}}" }
   bottom1: "© 2026 多多贝 duoduobei · 不荐股 · 不跟单 · 数据主权"
-  bottom2: "<a href=\"https://github.com/imoyao\" style=\"color:inherit;text-decoration:underline;text-underline-offset:3px;\">GitHub</a>"
+  bottom2: "<a href=\"{{links.github}}\" style=\"color:inherit;text-decoration:underline;text-underline-offset:3px;\">GitHub</a>"
 
 # ===== About 品牌页文案（章节结构与 docs/site/about.md 对齐，文案可自由润色美化） =====
 about:
