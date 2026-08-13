@@ -4,7 +4,11 @@ node_modules/
 .DS_Store
 
 # 构建产物（由 build-landing.mjs 生成，CF Pages 部署时自动构建，不入库）
-index.html
-about.html
-story.html
-landing.html
+# 仅限仓库根目录，避免误伤子项目（如 trading-personality-h5/index.html）
+/index.html
+/about.html
+/story.html
+/landing.html
+
+# 子项目临时调试产物（trading-personality-h5 的 diag/probe/shot/validate 脚本与截图）
+trading-personality-h5/_*

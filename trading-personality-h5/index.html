@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>多多贝 · 海洋投资人格探索器</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+  /* ============================================================
+     设计令牌：镜像 site/style.css 全局语义（亮色暖调，珊瑚红品牌）
+     唯一真相在 frontend/src/style/colors.css，此处为静态页镜像，禁止漂移
+     ============================================================ */
+  :root {
+    --brand:        #E34F38;   /* 品牌主色 / 涨色 */
+    --brand-deep:   #CC3D27;   /* 品牌深红 */
+    --brand-light:  #FABDB0;   /* 浅珊瑚 */
+    --bg-page:      #FDFBF7;   /* 暖奶油白（页面底） */
+    --bg-soft:      #F5F0EB;   /* 柔和表面 */
+    --card:         #FFFFFF;   /* 卡片底 */
+    --ink:          #2D2A24;   /* 暖黑（正文） */
+    --ink-2:        #6B655C;   /* 暖灰（次级） */
+    --ink-3:        #8C8478;   /* 暖灰（弱化） */
+    --line:         #E5DDD4;   /* 默认边框 */
+    --line-light:   #F0EBE4;   /* 极浅边框 */
+    --rise:         var(--brand);  /* 涨 = 珊瑚红（A 股习惯） */
+    --fall:         #7BC49A;   /* 跌 = 柔和灰绿 */
+    --shadow-sm:    0 1px 2px rgba(45, 42, 36, 0.05);
+    --shadow-md:    0 6px 18px rgba(45, 42, 36, 0.08);
+    --radius:       16px;      /* 卡片圆角 */
+    --ease:         cubic-bezier(0.19, 1, 0.22, 1);
+    --font:         Inter, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --brand-rgb: 227, 79, 56;  /* --brand 的 RGB 分量，供透明度派生 */
+    --fall-rgb: 123, 196, 154; /* --color-fall 的 RGB 分量，供透明度派生 */
+    --fall-deep: #2E7D5B;      /* 跌色的深色可读变体（反例文字用，非新语义色） */
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg-page);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.65;
+    /* 极轻的暖调光晕，保持页面通透 */
+    background-image: radial-gradient(90% 50% at 50% -5%, #FBE9E1 0%, rgba(251,233,225,0) 70%);
+    background-repeat: no-repeat;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 48px 16px 56px; }
+
+  /* 固定顶栏：返回首页 / 使用产品（H5 作为营销站子页，提供跳出与回流入口） */
+  .home-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; font-size: 13px; font-weight: 600;
+    background: linear-gradient(var(--bg-page), rgba(253,251,247,0));
+    pointer-events: none;
+  }
+  .home-bar a { pointer-events: auto; color: var(--ink-2); text-decoration: none; }
+  .home-bar a:hover { color: var(--brand-deep); }
+
+  /* 固定免责声明条：本测试为认知探索，不构成投资建议 */
+  .disclaimer-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    padding: 7px 14px; font-size: 11px; line-height: 1.45; text-align: center;
+    color: var(--ink-3); background: rgba(245,240,235,0.96);
+    border-top: 1px solid var(--line-light);
+  }
+
+  /* 品牌字标 */
+  .brand { text-align: center; margin: 4px 0 14px; letter-spacing: 2px; }
+  .brand small {
+    display: inline-block; font-size: 12px; font-weight: 700; color: var(--brand-deep);
+    background: var(--bg-soft); border: 1px solid var(--line-light);
+    padding: 3px 12px; border-radius: 999px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .25s var(--ease); }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  h1 { font-size: 24px; margin: 0 0 6px; letter-spacing: .5px; }
+  h2 { font-size: 19px; margin: 0 0 12px; }
+  .sub { color: var(--ink-2); font-size: 13px; margin-bottom: 20px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
+  }
+
+  /* 封面 hero：珊瑚暖调渐变 + 底部极简海浪装饰 */
+  .hero {
+    background: linear-gradient(165deg, #FDFBF7 0%, #FDF0EA 55%, #FBE3DA 100%);
+    border-color: #F3DDD2; padding: 30px 22px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero h1 { font-size: 26px; color: var(--brand-deep); letter-spacing: 1px; }
+  .hero .sub { color: var(--ink-2); font-size: 13.5px; margin-bottom: 16px; }
+  .hero p.desc { font-size: 14.5px; color: var(--ink); margin: 0 0 18px; }
+  .hero .tiny { color: var(--ink-3); }
+  .wave { display: block; width: 100%; height: 26px; margin-top: 20px; opacity: .55; }
+
+  .scene-tag {
+    display: inline-block; font-size: 12px; color: var(--brand-deep);
+    border: 1px solid rgba(204, 61, 39, .45); background: rgba(227, 79, 56, .06);
+    border-radius: 999px; padding: 2px 10px; margin-bottom: 10px; font-weight: 600;
+  }
+  .context { font-size: 15px; margin-bottom: 16px; }
+
+  .opt {
+    display: block; width: 100%; text-align: left; margin: 10px 0; padding: 14px 14px 14px 44px;
+    position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    color: var(--ink); font-size: 14.5px; cursor: pointer; transition: border-color .15s var(--ease), background .15s var(--ease);
+  }
+  .opt:hover { border-color: var(--brand); }
+  .opt .k {
+    position: absolute; left: 12px; top: 12px; width: 22px; height: 22px; line-height: 22px;
+    text-align: center; border-radius: 6px; background: var(--bg-soft); color: var(--ink-2);
+    font-weight: 700; font-size: 13px; border: 1px solid var(--line-light);
+  }
+  .opt.sel { border-color: var(--brand); background: rgba(var(--brand-rgb), .06); box-shadow: var(--shadow-sm); }
+  .opt.sel .k { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+  /* 双命运提示（正反例）：选中选项后展示，强调同一操作在市场中的两种结局 */
+  .aft { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; animation: fade .25s var(--ease); }
+  .aft-title { font-size: 12px; color: var(--ink-3); text-align: center; margin-bottom: 8px; letter-spacing: 1px; }
+  .aft-row { display: flex; gap: 10px; }
+  .aft-card { flex: 1; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; line-height: 1.6; }
+  .aft-card b { display: block; font-size: 12px; margin-bottom: 4px; font-weight: 700; }
+  .aft-pos { background: rgba(var(--brand-rgb), .06); border: 1px solid rgba(var(--brand-rgb), .28); }
+  .aft-pos b { color: var(--brand-deep); }
+  .aft-neg { background: rgba(var(--fall-rgb), .10); border: 1px solid rgba(var(--fall-rgb), .45); }
+  .aft-neg b { color: var(--fall-deep); }
+  .aft-foot { margin-top: 8px; font-size: 11.5px; color: var(--ink-3); text-align: center; }
+
+  /* 双命运 · 标的对比区：接入公开行情后由 ECharts 绘制迷你 K 线 */
+  .aft-assets { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .aft-assets-title { font-size: 12px; color: var(--ink-3); text-align: center; margin-bottom: 8px; letter-spacing: 1px; }
+  .aft-asset-row { display: flex; gap: 10px; }
+  .aft-asset {
+    flex: 1; border-radius: 10px; padding: 8px 10px; text-align: center;
+    background: var(--bg-soft); border: 1px solid var(--line-light);
+  }
+  .aft-asset .code { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .aft-asset .name { font-size: 11px; color: var(--ink-2); margin-top: 2px; }
+  .aft-asset .dir { font-size: 10.5px; margin-top: 2px; }
+  .aft-asset .dir.up { color: var(--brand-deep); }
+  .aft-asset .dir.down { color: var(--fall-deep); }
+  /* K 线容器：加载成功后被 ECharts candlestick 填充；失败时保留文字占位 */
+  .aft-asset .kline-ph { height: 108px; margin-top: 6px; border-radius: 6px;
+    background: var(--bg-soft); border: 1px solid var(--line-light); overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-3); font-size: 10.5px; }
+  @media (max-width: 420px) { .aft-row, .aft-asset-row { flex-direction: column; } }
+
+  .btn {
+    display: block; width: 100%; padding: 15px; margin-top: 8px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+    color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 10px 30px -10px rgba(227, 79, 56, 0.45); transition: transform .15s var(--ease), opacity .15s;
+  }
+  .btn:active { transform: translateY(1px); background: linear-gradient(135deg, var(--brand-deep), #C03A26); opacity: .92; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; background: var(--bg-soft); color: var(--ink-3); }
+  .btn.ghost { background: var(--card); border: 1px solid var(--line); color: var(--ink); font-weight: 500; box-shadow: none; }
+
+  /* 进度：左上角半透明圆点，不占横条宽度 */
+  .progress { position: fixed; top: 10px; left: 12px; z-index: 20; display: flex; gap: 6px; }
+  .progress i { width: 7px; height: 7px; border-radius: 50%; background: rgba(45, 42, 36, .18); transition: background .2s, transform .2s; }
+  .progress i.done { background: rgba(227, 79, 56, .55); }
+  .progress i.cur { background: var(--brand); transform: scale(1.25); }
+  .prog-txt { position: fixed; top: 8px; right: 12px; z-index: 20; font-size: 11px; color: var(--ink-3); }
+
+  .radar { width: 100%; height: 320px; }
+  .dim-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px dashed var(--line-light); }
+  .dim-row:last-child { border-bottom: none; }
+  .dim-row .d { width: 56px; color: var(--ink-2); }
+  .dim-row .v { width: 34px; text-align: right; font-weight: 700; font-family: 'SF Mono', ui-monospace, monospace; }
+  .bar { flex: 1; height: 8px; border-radius: 4px; background: var(--bg-soft); overflow: hidden; align-self: center; margin: 0 10px; }
+  .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-light), var(--brand)); }
+
+  /* 截图即报告：虚线报告卡 */
+  .report {
+    border: 1.5px dashed var(--brand-light); border-radius: var(--radius);
+    background: #FFF7F4; padding: 16px 18px; margin-bottom: 16px; text-align: left;
+  }
+  .report .rep-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .report .rep-title { font-size: 14px; font-weight: 700; color: var(--brand-deep); }
+  .report .rep-shot { font-size: 11px; color: var(--brand); border: 1px solid var(--brand-light); border-radius: 999px; padding: 1px 8px; }
+  .report .rep-line { font-size: 13px; color: var(--ink); margin: 4px 0; }
+  .report .rep-line b { color: var(--brand-deep); }
+  .report .rep-line.rep-bottom { color: var(--fall-deep); }
+  .report .rep-line.rep-bottom b { color: var(--fall-deep); }
+  .report .rep-hook { font-size: 12.5px; color: var(--ink-2); border-top: 1px dashed var(--brand-light); margin-top: 10px; padding-top: 10px; }
+  .share-btn { border: 1px solid var(--brand-light); background: rgba(var(--brand-rgb), .06); color: var(--brand-deep); margin-top: 14px; }
+
+  .hook { text-align: center; padding: 22px 6px; }
+  .hook h2 { font-size: 20px; }
+  .hook p { color: var(--ink-2); font-size: 14px; }
+
+  /* 微信二维码占位：替换为真实二维码后删除占位说明 */
+  .qr {
+    width: 132px; height: 132px; margin: 12px auto 14px; border-radius: 12px;
+    border: 1.5px dashed var(--brand-light); background: #FFF7F4;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.5;
+  }
+
+  input[type=text] {
+    width: 100%; padding: 13px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); font-size: 15px; text-align: center; letter-spacing: 6px;
+  }
+  input[type=text]:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(227,79,56,.08); }
+  .tiny { font-size: 11.5px; color: var(--ink-3); margin-top: 10px; line-height: 1.5; }
+  .ok { text-align: center; padding: 26px 8px; }
+  .ok .badge { font-size: 15px; font-weight: 700; color: var(--brand-deep); }
+  .err { color: var(--brand-deep); font-size: 13px; min-height: 18px; }
+</style>
+</head>
+<body>
+  <div class="home-bar">
+    <a href="/">← 多多贝首页</a>
+    <a href="/app">使用产品 →</a>
+  </div>
+<div class="wrap">
+
+  <div class="brand"><small>多多贝 · 投资认知闭环</small></div>
+
+  <!-- 封面 -->
+  <section id="cover" class="screen active">
+    <div class="card hero">
+      <h1>海洋投资人格探索器</h1>
+      <div class="sub">多多贝 · 验证期盲测切片 v0.1（脱敏）</div>
+      <p class="desc">先回答 2 道定位题，再经历 6 个真实投资情境。没有标准答案，我们只看你面对涨跌时的本能反应，最后生成你的「五维投资人格雷达图」。</p>
+      <p class="tiny">全程不展示具体日期与点位，不展示 K 线对比，仅用于认知探索。约 2 分钟。</p>
+      <svg class="wave" viewBox="0 0 400 26" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0,14 C50,6 90,22 140,14 C190,6 230,22 280,14 C330,6 370,22 400,14 L400,26 L0,26 Z" fill="rgba(227,79,56,.10)"/>
+      </svg>
+    </div>
+    <button class="btn" onclick="start()">开始探索</button>
+  </section>
+
+  <!-- 答题（Q0 定位 + 通用 + 分支，统一走同一渲染器） -->
+  <section id="quiz" class="screen">
+    <div class="progress" id="prog"></div>
+    <div class="prog-txt" id="progTxt"></div>
+    <div class="card">
+      <span class="scene-tag" id="scene"></span>
+      <div class="context" id="ctx"></div>
+      <div id="opts"></div>
+      <div id="aft" class="aft" style="display:none"></div>
+    </div>
+    <button class="btn" id="nextBtn" disabled onclick="next()">下一题</button>
+  </section>
+
+  <!-- 结果 + 留资 -->
+  <section id="result" class="screen">
+    <div class="card">
+      <h2>你的五维投资人格</h2>
+      <div id="radar" class="radar"></div>
+      <div id="dims"></div>
+    </div>
+
+    <!-- 截图即报告：虚线卡即"报告"，引导用户截图留存 -->
+    <div class="report" id="reportCard">
+      <div class="rep-head">
+        <span class="rep-title">投资人格报告</span>
+        <span class="rep-shot">截图即报告</span>
+      </div>
+      <div class="rep-line" id="repTier"></div>
+      <div class="rep-line" id="repTop"></div>
+      <div class="rep-line rep-bottom" id="repBottom"></div>
+      <div class="rep-hook" id="repHook"></div>
+    </div>
+
+    <!-- 分享入口：优先走系统分享（微信内会唤起转发），降级为提示手动截图 -->
+    <button class="btn ghost share-btn" onclick="shareReport()">把这份报告发给朋友</button>
+
+    <div class="hook">
+      <h2>想知道你的「自报假设」和「真实交易」差多远吗？</h2>
+      <p>导入你的真实账户，多多贝会对照你的实测操作，告诉你哪一块认知偏差最贵。</p>
+      <!-- TODO: 替换为真实个人微信二维码图片（个人开发者合规：不注册系统、不用邮箱） -->
+      <div class="qr">个人微信二维码<br/>（扫码领内测）</div>
+      <input type="text" id="wx" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="6 位授权码" autocomplete="off" />
+      <div class="err" id="err"></div>
+      <button class="btn" onclick="submitLead()">领取内测资格</button>
+      <div class="tiny" id="compliance"></div>
+      <button class="btn ghost" onclick="location.reload()" style="margin-top:18px">重新测一次</button>
+    </div>
+  </section>
+
+  <!-- 提交回执 -->
+  <section id="done" class="screen">
+    <div class="ok">
+      <div class="badge">已收到，谢谢！</div>
+      <h2>你的海洋人格已经入库</h2>
+      <p style="color:var(--ink-2);font-size:14px">我们会在内测开放时第一时间联系你。<br/>（验证期：留资仅本地记录，不展示、不分析交易）</p>
+    </div>
+    <button class="btn ghost" onclick="location.reload()">重新测一次</button>
+  </section>
+
+</div>
+
+<script id="quizFallback" type="application/json">
+{
+  "meta": {
+    "title": "多多贝 · 海洋投资人格探索器",
+    "version": "v0.2 验证切片（脱敏，每槽 3 题随机组卷）",
+    "dimensions": [
+      "出击",
+      "纪律",
+      "专注",
+      "切换",
+      "逆向"
+    ],
+    "note": "题库经脱敏处理，无具体日期/点位。仅用于验证期盲测；每题的 aftermath 已绑定一对真实跷跷板标的（positive_asset / negative_asset），前端直连公开行情接口（腾讯 ifzq K 线）绘制迷你 K 线做实盘对比，无需后端。当前以文字 + 标的历史区间提示同一操作在市场中的两种结局，强调市场不可测性。",
+    "compliance": "您的联系方式仅用于多多贝内测邀请，存储于加密数据库，不会用于其他用途，可随时联系我们删除。",
+    "passThreshold": {
+      "understandRate": 0.8,
+      "selfIdentifyRate": 0.6,
+      "fakeDoorRate": 0.2
+    }
+  },
+  "slots": [
+    {
+      "id": "gen-1",
+      "type": "general",
+      "scene": "冰点绝望·偏股",
+      "pool": [
+        {
+          "id": "Q1",
+          "context": "你持仓的核心赛道已连续缩量阴跌两个月。当前仓位 80%，账户总浮亏 -18%（重仓深套）。",
+          "options": [
+            {
+              "key": "A",
+              "label": "孤注一掷：剩下20%现金全部抄底，搏均值回归。",
+              "scores": {
+                "出击": 2,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "B",
+              "label": "纪律定投：把现金拆成5份，每周雷打不动买入。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "绝对防御：剩下现金全部买T+0理财，不补仓、不减仓，冷眼旁观。",
+              "scores": {
+                "出击": -1,
+                "纪律": 0,
+                "专注": 2,
+                "切换": 0,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "砍仓防御：卖出一半仓位，保住本钱。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在冰点恐慌时加仓，有人恰好买在深 V 反转的前夜，几个月后账户翻红。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在冰点恐慌时加仓，有人越跌越买，两年后仍未解套。"
+            },
+            "positive_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "2024-01 深V反转"
+            },
+            "negative_asset": {
+              "code": "588000",
+              "name": "科创50ETF",
+              "window": "2024-01 持续阴跌"
+            }
+          }
+        },
+        {
+          "id": "Q8",
+          "context": "你已满仓深套（无现金），持仓连续阴跌后终于迎来反弹 +6%，但仍浮亏 -25%。你犹豫要不要趁反弹调仓换股。",
+          "options": [
+            {
+              "key": "A",
+              "label": "割肉换股：趁反弹卖出深套的，换强势赛道。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "死扛不动：都跌这么多了，反弹才刚开始。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": 2,
+                "切换": -1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "反弹减仓：先卖一部分，回笼现金。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "只换一半：一半换强势股，一半留观察。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在反弹时换股，有人恰好换到了下一轮主线，很快填平了亏损。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在反弹时换股，有人刚割完，原持仓就接力大涨，两头落空。"
+            },
+            "positive_asset": {
+              "code": "515000",
+              "name": "科技ETF",
+              "window": "反弹期 主线延续"
+            },
+            "negative_asset": {
+              "code": "510880",
+              "name": "红利ETF",
+              "window": "反弹期 接力补涨"
+            }
+          }
+        },
+        {
+          "id": "Q9",
+          "context": "你已在恐慌中清仓离场，躲过了最后一跌。现在市场连涨三天、企稳反弹，你犹豫要不要重新进场。当前 100% 现金。",
+          "options": [
+            {
+              "key": "A",
+              "label": "立即追回：反弹已确认，赶紧买回来。",
+              "scores": {
+                "出击": 2,
+                "纪律": -1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "空仓等待：错过就错过，等回调再说。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "先买一半：重新进场但分批，控制节奏。",
+              "scores": {
+                "出击": 1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "转向防守：先买货基，观察板块持续性。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 1,
+                "切换": 0,
+                "逆向": -1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在反弹时重新进场，有人正好搭上修复行情，躲过下跌又吃到上涨。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在反弹时重新进场，有人刚买回就遭遇二次探底，又一次被套。"
+            },
+            "positive_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "反弹期 修复上行"
+            },
+            "negative_asset": {
+              "code": "159915",
+              "name": "创业板ETF",
+              "window": "反弹期 二次探底"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gen-2",
+      "type": "general",
+      "scene": "狂热贪婪·偏股",
+      "pool": [
+        {
+          "id": "Q2",
+          "context": "市场热度持续偏高，身边朋友都在晒收益，你持仓赛道逼空大涨。当前仓位 50%，总浮盈 +30%（半仓大赚）。",
+          "options": [
+            {
+              "key": "A",
+              "label": "乘胜追击：剩余资金全打进去，甚至想加杠杆。",
+              "scores": {
+                "出击": 2,
+                "纪律": -2,
+                "专注": -1,
+                "切换": 0,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "落袋为安：分批卖出，把浮盈兑现。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "以静制动：只要趋势没破，死拿不动。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": 2,
+                "切换": 0,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "仓位再平衡：卖掉获利部分，将权益仓位调回50%基准线，绝不追高。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": 2
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在狂热中追涨，有人吃到了主升浪的最后一段，落袋离场。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在狂热中追涨，有人恰好买在情绪顶点，此后一路阴跌。"
+            },
+            "positive_asset": {
+              "code": "512880",
+              "name": "证券ETF",
+              "window": "狂热期 主升浪"
+            },
+            "negative_asset": {
+              "code": "159915",
+              "name": "创业板ETF",
+              "window": "狂热期 顶点回落"
+            }
+          }
+        },
+        {
+          "id": "Q10",
+          "context": "市场热度持续偏高，身边有人开始用融资加杠杆，收益翻倍。你开始后悔自己仓位太轻、太保守。当前仓位 50%，总浮盈 +25%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "上杠杆：别人都能赚，我也加。",
+              "scores": {
+                "出击": 2,
+                "纪律": -2,
+                "专注": -1,
+                "切换": 0,
+                "逆向": -2
+              }
+            },
+            {
+              "key": "B",
+              "label": "拒绝诱惑：杠杆是双刃剑，我不碰。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 1,
+                "切换": 0,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "只打满现金仓位：不用杠杆，把闲钱投入。",
+              "scores": {
+                "出击": 1,
+                "纪律": 0,
+                "专注": 0,
+                "切换": 0,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "D",
+              "label": "部分止盈：反而趁机减一点仓位。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在狂热中上杠杆，有人恰好赶上主升浪最后一段，赚得盆满钵满。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在狂热中上杠杆，有人买在情绪顶点，随后爆仓，把本金也搭了进去。"
+            },
+            "positive_asset": {
+              "code": "512880",
+              "name": "证券ETF",
+              "window": "狂热期 主升浪"
+            },
+            "negative_asset": {
+              "code": "159915",
+              "name": "创业板ETF",
+              "window": "狂热期 杠杆崩塌"
+            }
+          }
+        },
+        {
+          "id": "Q11",
+          "context": "你持有的基金今年 +15%，但群里有人晒出 +60% 的行业基金。你开始怀疑自己选错了方向。当前仓位 70%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "立刻换仓：追上热门行业基金。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": -2,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "坚守原仓：风格会轮动，不追高。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": 2,
+                "切换": -1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "小额试探：拿 10% 试买热门方向。",
+              "scores": {
+                "出击": 1,
+                "纪律": 0,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "逢高止盈：先把 +15% 兑现一部分。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在狂热中换热门基金，有人恰好买在风口上，收益再翻一翻。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在狂热中换热门基金，有人刚换过去就遭遇回调，两头挨打。"
+            },
+            "positive_asset": {
+              "code": "159819",
+              "name": "人工智能ETF",
+              "window": "风口期 冲高"
+            },
+            "negative_asset": {
+              "code": "159928",
+              "name": "消费ETF",
+              "window": "风口期 回调"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gen-3",
+      "type": "general",
+      "scene": "黑天鹅突袭·偏股",
+      "pool": [
+        {
+          "id": "Q3",
+          "context": "外盘突发重大利空，次日A股直接跳空低开 -3%，你的持仓瞬间由盈转亏。当前仓位 70%，总浮盈 +5%（利润垫极薄）。",
+          "options": [
+            {
+              "key": "A",
+              "label": "越跌越买：别人恐惧我贪婪。",
+              "scores": {
+                "出击": 2,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "B",
+              "label": "纪律止损：跌破支撑线，砍掉一半仓位。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "一键清仓：先跑为敬，保命要紧。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -2,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "D",
+              "label": "装死躺平：关软件，坚信逻辑不变。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在恐慌低开时止损离场，有人躲过了后续的连续下杀。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在恐慌低开时止损离场，有人刚割完，市场就快速收复失地。"
+            },
+            "positive_asset": {
+              "code": "518880",
+              "name": "黄金ETF",
+              "window": "黑天鹅 避险上涨"
+            },
+            "negative_asset": {
+              "code": "512480",
+              "name": "芯片ETF",
+              "window": "黑天鹅 恐慌暴跌"
+            }
+          }
+        },
+        {
+          "id": "Q12",
+          "context": "利空落地，持仓开盘 -3%，你开始怀疑自己的交易系统，犹豫要不要开盘就割。当前仓位 70%，总浮盈 +2%（利润垫极薄）。",
+          "options": [
+            {
+              "key": "A",
+              "label": "开盘就割：保住微薄的利润。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "B",
+              "label": "等反弹再卖：不割在地板上，反弹减仓。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "逆势加仓：别人恐慌我贪婪。",
+              "scores": {
+                "出击": 2,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            },
+            {
+              "key": "D",
+              "label": "装死不动：不看盘，等情绪过去。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在恐慌低开时割肉，有人恰好躲过了更深的连续下跌。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在恐慌低开时割肉，有人刚割完，市场两天内快速收复失地。"
+            },
+            "positive_asset": {
+              "code": "510880",
+              "name": "红利ETF",
+              "window": "利空期 继续走弱"
+            },
+            "negative_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "利空期 快速收复"
+            }
+          }
+        },
+        {
+          "id": "Q13",
+          "context": "黑天鹅导致持仓连续阴跌，你想通过做 T+0 摊低成本。当前仓位 80%，总浮亏 -12%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "频繁做T：每天高抛低吸摊成本。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "B",
+              "label": "坚决不做T：做T是亏损之源，躺平。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "只在极端日做：大跌买、大涨卖，低频。",
+              "scores": {
+                "出击": 1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "卖掉一部分：降低操作难度。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 0
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在阴跌中做T，有人节奏踩得准，真把成本摊低了不少。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在阴跌中做T，有人高买低卖，把本金越做越少。"
+            },
+            "positive_asset": {
+              "code": "512480",
+              "name": "芯片ETF",
+              "window": "磨底期 反弹"
+            },
+            "negative_asset": {
+              "code": "515000",
+              "name": "科技ETF",
+              "window": "磨底期 阴跌"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gen-4",
+      "type": "general",
+      "scene": "漫长磨底·固收+",
+      "pool": [
+        {
+          "id": "Q4",
+          "context": "你持有的“固收+”产品在过去三个月持续阴跌，市场横盘毫无赚钱效应。当前仓位 60%，账户总浮亏 -6%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "彻底叛变：赎回转银行理财/纯债。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "熬过寒冬：相信股债平衡，不动。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "C",
+              "label": "减半仓防御：赎回一半，进退有据。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "逆势补仓：认为这是错杀机会。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在磨底期赎回，有人把资金转入更稳的货基，躲过了更深的回撤。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在磨底期赎回，有人刚赎回，产品就迎来修复行情，踏空反弹。"
+            },
+            "positive_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "磨底期 稳健"
+            },
+            "negative_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "磨底期 阴跌"
+            }
+          }
+        },
+        {
+          "id": "Q14",
+          "context": "固收+ 中的权益部分拖累净值持续阴跌，你后悔当初买它，想转成纯债基金图个安稳。当前仓位 60%，总浮亏 -8%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "立刻转换：转纯债，求稳。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "再熬一熬：固收+ 本来就该扛波动。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "先赎回一半：留一半观察。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "逆向补仓：权益部分跌多了，反而加仓。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在磨底期转纯债，有人恰好躲过了后续权益端的继续下跌。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在磨底期转纯债，有人刚转完，权益端就迎来反弹，两头不讨好。"
+            },
+            "positive_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "磨底期 稳中有升"
+            },
+            "negative_asset": {
+              "code": "159915",
+              "name": "创业板ETF",
+              "window": "磨底期 继续回撤"
+            }
+          }
+        },
+        {
+          "id": "Q15",
+          "context": "固收+ 已阴跌三个月，你判断“越跌越有价值”，打算把每月定投金额翻倍。当前仓位 60%，总浮亏 -6%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "翻倍定投：越跌越买，摊低成本。",
+              "scores": {
+                "出击": 1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            },
+            {
+              "key": "B",
+              "label": "维持原额：定投纪律不能破。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "暂停定投：趋势不明，先停一停。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "D",
+              "label": "减半定投：留出子弹应对更差情况。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 0
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在磨底期加码定投，有人正好摊在了底部区间，反弹后收益显著。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在磨底期加码定投，有人低估了磨底时长，子弹很快打光，后续无力加仓。"
+            },
+            "positive_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "磨底期 见底反弹"
+            },
+            "negative_asset": {
+              "code": "512480",
+              "name": "芯片ETF",
+              "window": "磨底期 磨底拉长"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gen-5",
+      "type": "general",
+      "scene": "流动性冲击·纯债",
+      "pool": [
+        {
+          "id": "Q5",
+          "context": "央行突然收紧流动性，你的中长债基金单周净值急跌 -0.8%（纯债里属于“暴跌”）。当前仓位 100%，总浮盈 +2%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "夺路而逃：恐慌性赎回，全部转入银行定期存款。",
+              "scores": {
+                "出击": -2,
+                "纪律": -1,
+                "专注": -2,
+                "切换": 2,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "B",
+              "label": "毫不动摇：纯债吃票息，利率波动是暂时的。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "C",
+              "label": "降低久期：赎回长期债基部分，保留中短债底仓。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "博弈反转：逆势加仓，博利率回落修复。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在债市急跌时撤出，有人躲过了资金面的继续收紧。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在债市急跌时撤出，有人撤出后利率快速回落、债价反弹，踏空整段修复。"
+            },
+            "positive_asset": {
+              "code": "511260",
+              "name": "十年国债ETF",
+              "window": "收紧期 继续走弱"
+            },
+            "negative_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "收紧期 快速修复"
+            }
+          }
+        },
+        {
+          "id": "Q16",
+          "context": "央行收紧流动性，中长债基金单周急跌 -0.8% 后，市场开始传言“错杀”。你想趁低加仓。当前仓位 100%，总浮盈 +2%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "果断抄底：错杀就是机会，加仓。",
+              "scores": {
+                "出击": 2,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            },
+            {
+              "key": "B",
+              "label": "按兵不动：流动性风险未解除。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "小幅加仓：先加一成观察。",
+              "scores": {
+                "出击": 1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "反而减仓：传言不可信，先落袋。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 0
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在债市错杀时加仓，有人恰好买在情绪低点，随后净值快速修复。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在债市错杀时加仓，有人抄底后发现资金面继续收紧，越套越深。"
+            },
+            "positive_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "错杀期 快速修复"
+            },
+            "negative_asset": {
+              "code": "511260",
+              "name": "十年国债ETF",
+              "window": "错杀期 持续承压"
+            }
+          }
+        },
+        {
+          "id": "Q17",
+          "context": "经历债市急跌后，你开始怀疑自己的持仓，想把所有中长债全部赎回换成现金，图个安心。当前仓位 100%，总浮盈 +1%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "全部赎回：安心最重要，不赚这钱。",
+              "scores": {
+                "出击": -2,
+                "纪律": -1,
+                "专注": -2,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "死守不动：纯债波动是暂时的，扛过去。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "C",
+              "label": "只换短债：短债波动小，兼顾收益与安心。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "赎一半留一半：降低焦虑。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 0
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在债市恐慌时赎回，有人恰好躲过了资金面的进一步收紧。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在债市恐慌时赎回，有人刚赎回，利率就快速回落，踏空整段修复。"
+            },
+            "positive_asset": {
+              "code": "511260",
+              "name": "十年国债ETF",
+              "window": "恐慌期 继续走弱"
+            },
+            "negative_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "恐慌期 快速修复"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "branch-equity",
+      "type": "branch",
+      "track": "偏股",
+      "scene": "政策异动·偏股分支",
+      "pool": [
+        {
+          "id": "Q6",
+          "context": "周末超预期利好，周一你持仓板块高开 +3%，但市场传言“高开必低走”。当前仓位 50%，总浮盈 +15%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "趁高止盈：落袋为安。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "B",
+              "label": "无惧分歧：坚信是政策底，格局锁死。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "C",
+              "label": "利用分歧：卖掉高开的，换稳健大盘蓝筹。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "尾盘再定：观望到下午2点半。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 1,
+                "切换": 1,
+                "逆向": -1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在高开时止盈，有人恰好卖在利好兑现的高点。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在高开时止盈，有人刚卖完，行情继续高开高走，踏空主升。"
+            },
+            "positive_asset": {
+              "code": "512880",
+              "name": "证券ETF",
+              "window": "政策期 高开高走"
+            },
+            "negative_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "政策期 高开低走"
+            }
+          }
+        },
+        {
+          "id": "Q18",
+          "context": "政策利好正式落地，你的板块高开 +3% 后继续上冲，市场开始喊“政策牛”。你犹豫要不要追高。当前仓位 50%，总浮盈 +15%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "追高加仓：政策牛来了，别犹豫。",
+              "scores": {
+                "出击": 2,
+                "纪律": -2,
+                "专注": -1,
+                "切换": 0,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "逢高止盈：利好兑现即出货。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "持股不动：让利润奔跑。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": 2,
+                "切换": -1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "小幅加仓：加一点点，控制风险。",
+              "scores": {
+                "出击": 1,
+                "纪律": 0,
+                "专注": -1,
+                "切换": 1,
+                "逆向": -1
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在政策利好时追高，有人恰好买在启动点，吃到了主升浪。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在政策利好时追高，有人买在利好兑现的顶点，随后高开低走被套。"
+            },
+            "positive_asset": {
+              "code": "512880",
+              "name": "证券ETF",
+              "window": "政策牛 主升浪"
+            },
+            "negative_asset": {
+              "code": "512480",
+              "name": "芯片ETF",
+              "window": "政策牛 高开低走"
+            }
+          }
+        },
+        {
+          "id": "Q19",
+          "context": "政策利好落地后，你的持仓板块冲高回落，而另一板块被政策点名受益、持续走强。你犹豫要不要换过去。当前仓位 60%，总浮盈 +10%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "立即换仓：跟上政策主线。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": -2,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "坚守原仓：轮动会回来，不追。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": 2,
+                "切换": -1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "卖一半换：两边下注。",
+              "scores": {
+                "出击": 0,
+                "纪律": 0,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "先研究再动：观察政策受益板块的持续性。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": 1,
+                "切换": 0,
+                "逆向": 0
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在政策分化时换仓，有人恰好换到了政策真正的受益主线。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在政策分化时换仓，有人刚换过去，原板块就接力反弹，两头落空。"
+            },
+            "positive_asset": {
+              "code": "512800",
+              "name": "银行ETF",
+              "window": "政策主线 持续走强"
+            },
+            "negative_asset": {
+              "code": "510300",
+              "name": "沪深300ETF",
+              "window": "政策分化 冲高回落"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "branch-bond",
+      "type": "branch",
+      "track": "纯债",
+      "scene": "资产重构·纯债分支",
+      "pool": [
+        {
+          "id": "Q7",
+          "context": "重磅会议提出积极财政政策，预期国债发行量激增，你的国债ETF急速跳水 -0.5%。当前仓位 100%，总浮盈 +4%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "利空兑现：赎回避险。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -2,
+                "切换": 2,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "B",
+              "label": "不动如山：国债是宏观大局，长期逻辑不变。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 2,
+                "切换": -1,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "C",
+              "label": "减半仓防守：多留现金观望。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "博弈回补：财政落地伴随降息，逆势加仓。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在国债调整时减仓，有人躲过了供给冲击的发酵。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在国债调整时减仓，有人减仓后降息落地、债市大涨，踏空修复。"
+            },
+            "positive_asset": {
+              "code": "511260",
+              "name": "十年国债ETF",
+              "window": "供给期 继续调整"
+            },
+            "negative_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "供给期 降息反弹"
+            }
+          }
+        },
+        {
+          "id": "Q20",
+          "context": "大规模国债发行冲击过后，你的国债 ETF 开始企稳，你想趁机抄底加仓。当前仓位 100%，总浮盈 +3%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "果断抄底：供给冲击是一次性的。",
+              "scores": {
+                "出击": 2,
+                "纪律": -1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 2
+              }
+            },
+            {
+              "key": "B",
+              "label": "观望确认：企稳不等于反转。",
+              "scores": {
+                "出击": -1,
+                "纪律": 2,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "C",
+              "label": "小幅加仓：分批买入更稳妥。",
+              "scores": {
+                "出击": 1,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 0,
+                "逆向": 1
+              }
+            },
+            {
+              "key": "D",
+              "label": "反而减仓：供给压力可能持续。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 0
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在供给冲击后抄底，有人恰好买在债市低点，随后净值修复。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在供给冲击后抄底，有人抄早了，后续还有第二波供给压力，越套越深。"
+            },
+            "positive_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "供给期 企稳修复"
+            },
+            "negative_asset": {
+              "code": "511260",
+              "name": "十年国债ETF",
+              "window": "供给期 二次承压"
+            }
+          }
+        },
+        {
+          "id": "Q21",
+          "context": "市场预期降息，你想把国债换成更长久期的债券基金，博更多资本利得。当前仓位 100%，总浮盈 +4%。",
+          "options": [
+            {
+              "key": "A",
+              "label": "全部换长久期：降息预期明确，吃利得。",
+              "scores": {
+                "出击": 1,
+                "纪律": -1,
+                "专注": -1,
+                "切换": 2,
+                "逆向": -1
+              }
+            },
+            {
+              "key": "B",
+              "label": "维持现状：久期匹配风险承受力最重要。",
+              "scores": {
+                "出击": 0,
+                "纪律": 2,
+                "专注": 1,
+                "切换": -1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "C",
+              "label": "只换一部分：控制久期风险。",
+              "scores": {
+                "出击": 0,
+                "纪律": 1,
+                "专注": 0,
+                "切换": 1,
+                "逆向": 0
+              }
+            },
+            {
+              "key": "D",
+              "label": "反向操作：预期太一致，反而减久期。",
+              "scores": {
+                "出击": -1,
+                "纪律": 1,
+                "专注": -1,
+                "切换": 1,
+                "逆向": 2
+              }
+            }
+          ],
+          "aftermath": {
+            "positive": {
+              "title": "同样操作 · 有人赚了",
+              "text": "同样在降息预期下加久期，有人恰好吃到了收益率下行的大段利得。"
+            },
+            "negative": {
+              "title": "同样操作 · 有人亏了",
+              "text": "同样在降息预期下加久期，有人押注落空，收益率反而上行，回撤吞噬票息。"
+            },
+            "positive_asset": {
+              "code": "511260",
+              "name": "十年国债ETF",
+              "window": "降息期 利得走阔"
+            },
+            "negative_asset": {
+              "code": "511010",
+              "name": "国债ETF",
+              "window": "降息期 收益率上行"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script>
+const DATA_URL = "quiz-data.json";
+const DIMS = ["出击", "纪律", "专注", "切换", "逆向"];
+
+/* 留资上报端点：验证期置空则仅本地记录；接入后可填如
+   "https://your-api.edge.app/lead"（EdgeOne Pages Functions 或等价端点）。 */
+const LEAD_ENDPOINT = "";
+
+/* ---------- 行情接入：腾讯公开 K 线接口，前端直连，无需后端 ----------
+   接口: https://web.ifzq.gtimg.cn/appstock/app/fqkline/get
+   CORS: ACAO: *（已实测本地 Edge 与公网均可直连）
+   参数: sh/sz + code, day, , , count, qfq（前复权）
+   数据: j.data.sh510300.qfqday —— 每项 [日期, 开, 收, 高, 低, 量]
+   容错: 拉取失败时保留 .kline-ph 占位格；成功数据按「代码+日期」缓存一天 */
+const KLINE_CACHE_PREFIX = "fundmate_kline_";
+const KLINE_DAYS = 60;
+
+function marketOf(code) { return /^[56]/.test(code) ? "sh" : "sz"; }
+function klineCacheKey(code) {
+  return KLINE_CACHE_PREFIX + code + "_" + new Date().toISOString().slice(0, 10);
+}
+function pruneKlineCache() {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(KLINE_CACHE_PREFIX) && !k.includes(today)) localStorage.removeItem(k);
+    }
+  } catch (e) { /* 隐私模式等场景忽略 */ }
+}
+async function fetchKline(code, count = KLINE_DAYS) {
+  const ck = klineCacheKey(code);
+  try {
+    const hit = localStorage.getItem(ck);
+    if (hit) return JSON.parse(hit);
+  } catch (e) { /* 命中失败继续走网络 */ }
+  const mkt = marketOf(code);
+  const url = "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=" + mkt + code +
+    ",day,,," + count + ",qfq";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const j = await res.json();
+  const bucket = (j.data && (j.data[mkt + code] || {}).qfqday) || [];
+  const klines = bucket.map(k => [k[0], +k[1], +k[2], +k[3], +k[4]]); // [date, open, close, high, low]
+  if (!klines.length) throw new Error("empty klines");
+  try { localStorage.setItem(ck, JSON.stringify(klines)); pruneKlineCache(); } catch (e) {}
+  return klines;
+}
+function drawMiniKline(el, klines) {
+  if (!window.echarts) { el.textContent = "图表组件未加载"; return; }
+  const chart = echarts.init(el);
+  el._chart = chart;
+  chart.setOption({
+    grid: { left: 2, right: 2, top: 8, bottom: 2 },
+    xAxis: { type: "category", data: klines.map(k => k[0]), show: false },
+    yAxis: { type: "value", scale: true, show: false },
+    tooltip: {
+      trigger: "axis", confine: true, backgroundColor: "rgba(30,28,24,.92)",
+      borderWidth: 0, textStyle: { color: "#fff", fontSize: 10 },
+      formatter: ps => {
+        const d = ps[0].data; // [open, close, lowest, highest]
+        return ps[0].name + "<br/>开 " + d[0] + " · 收 " + d[1] + "<br/>高 " + d[3] + " · 低 " + d[2];
+      }
+    },
+    series: [{
+      type: "candlestick",
+      data: klines.map(k => [k[1], k[2], k[4], k[3]]), // [open, close, lowest, highest]
+      itemStyle: { color: "#E34F38", color0: "#2E8B57", borderColor: "#E34F38", borderColor0: "#2E8B57" }
+    }]
+  });
+}
+function hydrateKlines(root) {
+  root.querySelectorAll(".kline-ph[data-code]").forEach(el => {
+    const code = el.dataset.code;
+    el.textContent = "行情加载中…";
+    fetchKline(code).then(k => drawMiniKline(el, k)).catch(() => {
+      el.textContent = "行情暂不可用";
+      el.title = "公开行情接口暂不可达，请稍后再试";
+    });
+  });
+}
+
+/* Q0 定位层（2 题，不计分）：定位用户画像（T1/T2/T3）与分支轨道（偏股/固收+/纯债）
+   放在独立常量里而非题库 JSON，避免 fetch 副本与内联副本双份同步风险。 */
+const Q0 = {
+  "Q0-1": {
+    scene: "定位 · 投资经验",
+    context: "先来两道定位题，帮我们理解你的背景。没有对错之分。",
+    options: [
+      { key: "A", label: "刚接触，靠直觉或听人推荐", tier: "T1" },
+      { key: "B", label: "有几年经验，跟着行情热点走", tier: "T2" },
+      { key: "C", label: "经历过牛熊，有自己的交易系统", tier: "T3" }
+    ]
+  },
+  "Q0-2": {
+    scene: "定位 · 持仓结构",
+    context: "你目前的持仓更偏向哪种？",
+    options: [
+      { key: "A", label: "偏股为主（股票 / 偏股基金占比高）", track: "偏股" },
+      { key: "B", label: "股债平衡（固收+ / 混合型）", track: "固收+" },
+      { key: "C", label: "偏债为主（纯债 / 货基为主）", track: "纯债" }
+    ]
+  }
+};
+/* Q0-1 画像 → 展示标签映射 */
+const TIER_LABEL = { T1: "T1 · 新手探索者", T2: "T2 · 跟风观察者", T3: "T3 · 老练掌舵者" };
+
+let quiz = null;       // { meta, slots }
+let drawn = [];        // 本次组卷抽中的计分题：[{ slotId, scene, q }]，q.options 已洗牌
+let steps = [];        // 实际答题序列：[Q0-1, Q0-2, ...通用 5 题, 分支 1 题]，共 8 屏
+let idx = 0;
+let answers = [];      // 与 steps 等长的作答索引（含 Q0，Q0 不计分）
+let profile = { tier: null, track: null };
+
+async function init() {
+  // 优先 fetch 外部 quiz-data.json（便于后续热替换），失败则回退到内联副本
+  // （file:// 直接双击打开时 fetch 会被浏览器拦截，内联副本保证可离线运行）
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error("题库加载失败");
+    quiz = await res.json();
+  } catch (e) {
+    const fb = document.getElementById("quizFallback");
+    try { quiz = fb ? JSON.parse(fb.textContent) : null; } catch (_) { quiz = null; }
+  }
+  if (!quiz) {
+    document.getElementById("ctx").textContent = "题库加载失败，请用本地服务器打开（见 README）。";
+    return;
+  }
+  document.getElementById("compliance").textContent = quiz.meta.compliance || "";
+}
+
+function start() {
+  if (!quiz) { alert("题库尚未加载，请稍候或刷新页面。"); return; }
+  drawGeneral();       // 先抽通用 5 题（分支题待 Q0-2 定轨道后再补抽）
+  rebuildSteps();
+  idx = 0;
+  show("quiz"); render();
+}
+
+/* ===== 组卷抽题机制 =====
+   题库结构：quiz.slots = [{ id, type: general|branch, track?, scene, pool: [题目...] }]
+   每次开测从每个槽位的 pool 随机抽 1 题，并对该题选项洗牌：
+   - 通用槽位（general）人人必答；
+   - 分支槽位（branch）按 Q0-2 轨道选 1 个：偏股→branch-equity；纯债/固收+→branch-bond。
+   pool 扩充到多候选后，每次测试抽到的题目自然不同；当前每槽 1 题，
+   随机性体现在选项顺序（防"每次都点第一个"的惯性）。 */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function pickOne(pool) {
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  return { ...picked, options: shuffle(picked.options.slice()) };
+}
+function drawGeneral() {
+  drawn = quiz.slots
+    .filter(s => s.type === "general")
+    .map(s => ({ slotId: s.id, scene: s.scene, q: pickOne(s.pool) }));
+}
+function drawBranch() {
+  const track = profile.track === "偏股" ? "偏股" : "纯债"; // 固收+/纯债共用纯债分支槽
+  const slot = quiz.slots.find(s => s.type === "branch" && s.track === track);
+  if (slot) drawn.push({ slotId: slot.id, scene: slot.scene, q: pickOne(slot.pool) });
+}
+
+/* 构建答题序列：Q0 两题 + 组卷抽出的计分题
+   Q0-2 答完后轨道确定，才补抽分支题（answers 从 7 屏扩到 8 屏，保留已答 Q0） */
+function rebuildSteps() {
+  steps = [
+    { type: "q0", id: "Q0-1" },
+    { type: "q0", id: "Q0-2" }
+  ];
+  drawn.forEach(d => steps.push({ type: "q", scene: d.scene, q: d.q }));
+  if (!answers || answers.length !== steps.length) {
+    const next = new Array(steps.length).fill(null);
+    for (let i = 0; answers && i < Math.min(answers.length, steps.length); i++) next[i] = answers[i];
+    answers = next;
+  }
+}
+
+function curStep() { return steps[idx]; }
+
+function render() {
+  const s = curStep();
+  if (s.type === "q0") {
+    const q0 = Q0[s.id];
+    document.getElementById("scene").textContent = q0.scene;
+    document.getElementById("ctx").textContent = q0.context;
+  } else {
+    document.getElementById("scene").textContent = s.scene;
+    document.getElementById("ctx").textContent = s.q.context;
+  }
+  const box = document.getElementById("opts");
+  box.innerHTML = "";
+  const opts = s.type === "q0" ? Q0[s.id].options : s.q.options;
+  opts.forEach((o, i) => {
+    const b = document.createElement("button");
+    b.className = "opt" + (answers[idx] === i ? " sel" : "");
+    b.innerHTML = `<span class="k">${o.key}</span>${o.label}`;
+    b.onclick = () => { answers[idx] = i; onAnswered(); render(); };
+    box.appendChild(b);
+  });
+  // 进度：左上角圆点 + 右上角文字
+  const p = document.getElementById("prog"); p.innerHTML = "";
+  document.getElementById("progTxt").textContent = `第 ${idx + 1} / ${steps.length} 题`;
+  for (let i = 0; i < steps.length; i++) {
+    const seg = document.createElement("i");
+    seg.className = i < idx ? "done" : (i === idx ? "cur" : "");
+    p.appendChild(seg);
+  }
+  document.getElementById("nextBtn").disabled = answers[idx] === null;
+  const last = idx === steps.length - 1;
+  document.getElementById("nextBtn").textContent = last ? "查看结果" : (s.type === "q0" ? "下一步" : "下一题");
+
+  // 双命运提示：选中选项后展示该题正反例（Q0 定位题无此内容）
+  const aft = document.getElementById("aft");
+  if (s.type === "q0" || answers[idx] === null || !s.q.aftermath) {
+    aft.style.display = "none"; aft.innerHTML = "";
+  } else {
+    const am = s.q.aftermath;
+    aft.style.display = "block";
+    let assets = "";
+    if (am.positive_asset || am.negative_asset) {
+      const pos = am.positive_asset, neg = am.negative_asset;
+      assets = `
+      <div class="aft-assets">
+        <div class="aft-assets-title">背后是这两只标的 · 真实行情对比</div>
+        <div class="aft-asset-row">
+          <div class="aft-asset">
+            ${pos ? `<div class="code">${pos.code}</div><div class="name">${pos.name}</div><div class="dir up">${pos.window || "上行"}</div><div class="kline-ph" data-code="${pos.code}" title="${pos.code} ${pos.name} · 最近 ${KLINE_DAYS} 个交易日">行情加载中…</div>` : "<div class='tiny'>—</div>"}
+          </div>
+          <div class="aft-asset">
+            ${neg ? `<div class="code">${neg.code}</div><div class="name">${neg.name}</div><div class="dir down">${neg.window || "下行"}</div><div class="kline-ph" data-code="${neg.code}" title="${neg.code} ${neg.name} · 最近 ${KLINE_DAYS} 个交易日">行情加载中…</div>` : "<div class='tiny'>—</div>"}
+          </div>
+        </div>
+      </div>`;
+    }
+    aft.innerHTML = `
+      <div class="aft-title">同一时刻，市场里的两种命运</div>
+      <div class="aft-row">
+        <div class="aft-card aft-pos"><b>${am.positive.title}</b>${am.positive.text}</div>
+        <div class="aft-card aft-neg"><b>${am.negative.title}</b>${am.negative.text}</div>
+      </div>
+      ${assets}
+      <div class="aft-foot">同一个时点，不同的标的，不同的命运——市场不可预测。</div>`;
+    hydrateKlines(aft);
+  }
+}
+
+/* Q0 回答后立即记录画像/轨道；Q0-2 答完补抽分支题并重建答题序列 */
+function onAnswered() {
+  if (curStep().id === "Q0-1" && answers[idx] !== null) {
+    profile.tier = Q0["Q0-1"].options[answers[idx]].tier;
+  }
+  if (curStep().id === "Q0-2" && answers[idx] !== null) {
+    profile.track = Q0["Q0-2"].options[answers[idx]].track;
+    drawBranch();
+    rebuildSteps();
+  }
+}
+
+function next() {
+  if (answers[idx] === null) return;
+  if (idx < steps.length - 1) { idx++; render(); }
+  else { compute(); show("result"); drawRadar(); renderReport(); }
+}
+
+/* 计分引擎：原始累加 + 每维 min-max 归一化到 [0,1]
+   只对计分题（steps 中 type==='q' 的 6 题）计算，Q0 不参与 */
+function compute() {
+  const raw = {}, lo = {}, hi = {};
+  DIMS.forEach(d => { raw[d] = 0; lo[d] = 0; hi[d] = 0; });
+  steps.forEach((s, i) => {
+    if (s.type !== "q" || answers[i] === null) return;
+    const opt = s.q.options[answers[i]];
+    DIMS.forEach(d => {
+      const v = opt.scores[d] || 0;
+      raw[d] += v;
+      lo[d] += Math.min(...s.q.options.map(o => o.scores[d] || 0));
+      hi[d] += Math.max(...s.q.options.map(o => o.scores[d] || 0));
+    });
+  });
+  const norm = {};
+  DIMS.forEach(d => {
+    const span = (hi[d] - lo[d]) || 1;
+    norm[d] = Math.max(0, Math.min(1, (raw[d] - lo[d]) / span));
+  });
+  return { raw, norm };
+}
+
+let radarChart = null;
+function drawRadar() {
+  const { raw, norm } = compute();
+  const el = document.getElementById("radar");
+  if (typeof echarts === "undefined") {
+    el.innerHTML = '<div class="tiny">雷达图组件未加载（无网络）。下方为文字版维度评分。</div>';
+    renderDims(norm); return;
+  }
+  radarChart = echarts.init(el, null, { renderer: "canvas" });
+  radarChart.setOption({
+    textStyle: { color: "#2D2A24" },
+    radar: {
+      indicator: DIMS.map(d => ({ name: d, max: 1, min: 0 })),
+      radius: "68%", center: ["50%", "54%"],
+      axisName: { color: "#6B655C", fontSize: 13 },
+      splitLine: { lineStyle: { color: "#E5DDD4" } },
+      splitArea: { areaStyle: { color: ["rgba(227,79,56,.03)", "rgba(227,79,56,.07)"] } },
+      axisLine: { lineStyle: { color: "#E5DDD4" } }
+    },
+    series: [{ type: "radar", data: [{ value: DIMS.map(d => +norm[d].toFixed(2)), name: "你" }],
+      areaStyle: { color: "rgba(227,79,56,.26)" }, lineStyle: { color: "#E34F38", width: 2 }, itemStyle: { color: "#E34F38" } }]
+  });
+  renderDims(norm);
+}
+
+function renderDims(norm) {
+  const box = document.getElementById("dims"); box.innerHTML = "";
+  DIMS.forEach(d => {
+    const row = document.createElement("div"); row.className = "dim-row";
+    row.innerHTML = `<span class="d">${d}</span><span class="bar"><span style="width:${Math.round(norm[d]*100)}%"></span></span><span class="v">${Math.round(norm[d]*100)}</span>`;
+    box.appendChild(row);
+  });
+}
+
+/* 截图即报告：报告卡内容 = 画像标签 + 最强因子 + 价值钩子 */
+function renderReport() {
+  const { norm } = compute();
+  const tier = profile.tier ? TIER_LABEL[profile.tier] : "T · 待定";
+  const top = DIMS.reduce((a, b) => (norm[a] >= norm[b] ? a : b));
+  const bottom = DIMS.reduce((a, b) => (norm[a] <= norm[b] ? a : b));
+  document.getElementById("repTier").innerHTML = `画像：<b>${tier}</b>`;
+  document.getElementById("repTop").innerHTML = `最强因子：<b>${top}</b>（${Math.round(norm[top]*100)} 分）`;
+  document.getElementById("repBottom").innerHTML =
+    `需要留意：你的 <b>${bottom}</b> 维度分数最低，是不是总有某类交易让你觉得失控？`;
+  document.getElementById("repHook").textContent =
+    "截图保存这份人格报告。你目前的真实持仓，和这份报告长得像吗？试试把真实持仓截图发到公众号，我们帮你跑一份对比雷达图。";
+}
+
+/* 微信分享入口：优先走系统分享（navigator.share），降级为提示手动截图 */
+function shareReport() {
+  const tier = profile.tier ? TIER_LABEL[profile.tier] : "投资人格";
+  const { norm } = compute();
+  const top = DIMS.reduce((a, b) => (norm[a] >= norm[b] ? a : b));
+  const text = `我的「${tier}」报告：最强因子是【${top}】。你也来测测你的投资人格，多多贝帮你跑一份对比雷达图。`;
+  const url = location.href.split("#")[0];
+  if (navigator.share) {
+    navigator.share({ title: "多多贝 · 投资人格报告", text, url })
+      .catch(() => alert("已生成分享文案，可截图本报告发给朋友。"));
+  } else {
+    /* 无 Web Share API（如部分安卓/微信内置浏览器）→ 引导截图 */
+    const ok = confirm("将复制分享文案，然后把本页报告截图发给朋友，可以吗？");
+    if (ok) {
+      try { navigator.clipboard.writeText(text + " " + url); } catch (e) {}
+      alert("文案已复制。请截图上方报告卡片发送给朋友，或扫码关注公众号。");
+    }
+  }
+}
+
+function submitLead() {
+  const input = document.getElementById("wx");
+  const v = (input.value || "").trim();
+  const err = document.getElementById("err");
+  // 合规：授权码必须为 6 位数字（个人开发者不注册系统、不用邮箱，Excel 手动发放）
+  if (!/^\d{6}$/.test(v)) { err.textContent = "请输入 6 位数字授权码（向群主领取）。"; return; }
+  const record = {
+    ts: new Date().toISOString(),
+    contact: v,
+    profile,
+    dims: compute().norm,
+    answers: steps.map((s, i) => ({
+      id: s.type === "q0" ? s.id : s.q.id,
+      choice: answers[i] === null ? null : (s.type === "q0" ? Q0[s.id].options[answers[i]].key : s.q.options[answers[i]].key)
+    }))
+  };
+  // 本地兜底：始终写一份到 localStorage，便于离线核查与后续回捞
+  try { localStorage.setItem("fundmate_lead_" + Date.now(), JSON.stringify(record)); } catch (e) {}
+  // 若配置了上报端点，则 POST 出去；未配置仅本地记录 + 控制台输出
+  if (LEAD_ENDPOINT) {
+    fetch(LEAD_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record)
+    }).then(r => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      console.log("[留资-已上报]", record);
+    }).catch(e => {
+      console.warn("[留资-上报失败，已留本地]", e);
+      err.textContent = "上报失败，已保存到本地，可稍后联系群主补录。";
+      return;
+    });
+  } else {
+    console.log("[验证期留资-本地]", record);
+  }
+  err.textContent = "";
+  show("done");
+}
+
+/* 授权码满 6 位自动提交 */
+function bindAuthAutoSubmit() {
+  const input = document.getElementById("wx");
+  input.addEventListener("input", () => {
+    if (/^\d{6}$/.test(input.value)) submitLead();
+  });
+}
+document.addEventListener("DOMContentLoaded", bindAuthAutoSubmit);
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+init();
+</script>
+  <div class="disclaimer-bar">本测试为投资认知探索，所有情境均为虚构，不构成任何投资建议；市场有风险，投资需谨慎。</div>
+</body>
+</html>
