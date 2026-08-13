@@ -441,7 +441,7 @@
 
     /* 页脚 */
     .footer { background: #3D352C; color: rgba(253,251,247,0.85); padding: 64px 0 32px; }
-    .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; margin-bottom: 44px; }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
     .footer-grid > div:last-child { justify-self: end; text-align: right; }
     .footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--bg-page); margin-bottom: 12px; }
     .footer-brand img { width: 30px; height: 30px; display: block; object-fit: contain; }
@@ -1430,16 +1430,18 @@
             </div>
             <p>{{{footer.tagline}}}</p>
           </div>
+          {{#each footer.columns}}
           <div>
-            <h5>关于</h5>
+            <h5>{{title}}</h5>
             <div class="footer-links">
-              {{#each footer.aboutLinks}}<a href="{{href}}">{{label}}</a>{{/each}}
+              {{#each links}}<a href="{{href}}">{{label}}</a>{{/each}}
             </div>
           </div>
+          {{/each}}
         </div>
         <div class="footer-bottom">
-          <span>{{footer.bottom1}}</span>
-          <span>{{{footer.bottom2}}}</span>
+          <span>{{site.copyright1}}</span>
+          <span>{{{site.copyright2}}}</span>
         </div>
       </div>
     </footer>

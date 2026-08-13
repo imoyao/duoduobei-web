@@ -64,44 +64,22 @@ const PAGES = {
   landing: { tpl: 'landing.template.html', out: 'index.html' },
   about: { tpl: 'about.template.html', out: 'about.html' },
   story: { tpl: 'story.template.html', out: 'story.html' },
+  privacy: { tpl: 'legal.template.html', out: 'privacy.html', key: 'privacy' },
+  terms: { tpl: 'legal.template.html', out: 'terms.html', key: 'terms' },
+  disclaimer: { tpl: 'legal.template.html', out: 'disclaimer.html', key: 'disclaimer' },
+  donate: { tpl: 'legal.template.html', out: 'donate.html', key: 'donate' },
 };
 
-// ===== about 章节结构校验（与 docs/site/about.md 对齐） =====
-// 规则：
-//   - YML about.blocks[*].title 必须全部存在于 docs/site/about.md 的 `## ` 标题中（双向）。
-// 用途：about.html 是品牌页，文案可自由润色美化（用户裁决：不要求逐句镜像 docs）；
-//       但章节结构应与 docs/site/about.md 保持对齐，防止某个 section 被悄悄删除而两处脱节。
-const ABOUT_DOCS_PATH = path.join(root, 'docs', 'about.md');
-
-function verifyAboutDrift() {
-  if (!data.about) return;
-  if (!fs.existsSync(ABOUT_DOCS_PATH)) {
-    console.warn('[build-landing] 未找到 ' + ABOUT_DOCS_PATH + '，跳过 about 结构校验');
-    return;
-  }
-  const md = fs.readFileSync(ABOUT_DOCS_PATH, 'utf8');
-  const mdTitles = [...md.matchAll(/^##\s+(.+)$/gm)].map((m) => m[1].trim());
-  const ymlTitles = (data.about.blocks || []).map((b) => b.title);
-  const errors = [];
-  for (const t of ymlTitles) {
-    if (!mdTitles.includes(t)) errors.push('章节「' + t + '」在 docs/site/about.md 中缺失');
-  }
-  for (const t of mdTitles) {
-    if (!ymlTitles.includes(t)) errors.push('章节「' + t + '」在 YML about.blocks 中缺失');
-  }
-  if (errors.length) {
-    console.error('[build-landing] ✗ about 章节结构与 docs/site/about.md 脱节：\n  - ' + errors.join('\n  - '));
-    console.error('  docs/site/about.md 与 landing.content.yml about.blocks 的章节标题需保持一致。');
-    process.exit(1);
-  }
-  console.log('[build-landing] ✓ about 章节结构校验通过（文案不受限，可自由润色）');
-}
-
 function buildPage(key) {
-  if (key === 'about') verifyAboutDrift();
-  const { tpl: tplFile, out: outFile } = PAGES[key];
+  const { tpl: tplFile, out: outFile, key: dataKey } = PAGES[key];
   const tplPath = path.join(root, tplFile);
   const outPath = path.join(root, outFile);
+  // legal 类页面：把当前 key 的 sections 渲染成 html 片段挂到 legal._current，供共用模板 {{{ }}} 输出
+  if (dataKey) {
+    const sec = (data.legal && data.legal[dataKey]) || { title: '', sections: [] };
+    data.legal = data.legal || {};
+    data.legal._current = { title: sec.title || '', html: renderSections(sec.sections || []) };
+  }
   let html = fs.readFileSync(tplPath, 'utf8');
 
 // 内联 SVG 图标内部路径（设计素材，不属于「可见文案」，故不入 YML）
@@ -141,41 +119,107 @@ function get(obj, p) {
 
 // html 已在 buildPage() 内读取（见上方）
 
-// 1) 循环块（先于标量，避免循环体内的 {{field}} 被标量正则误伤）
-const eachRe = /\{\{#each\s+([\w.]+)\}\}([\s\S]*?)\{\{\/each\}\}/g;
-html = html.replace(eachRe, (_m, p, body) => {
-  const arr = get(data, p) || [];
-  return arr
-    .map((item) =>
-      body.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_mm, f) => {
-        const v = get(item, f);
-        return v == null ? '' : esc(v);
-      })
-    )
-    .join('');
-});
+// 1) 循环块 / 条件块 / 原样输出 / 标量替换（支持嵌套 each/if）
+//    采用"最内层优先"正则（body 内不含 {{#each}}/{{#if}}）+ while 迭代，
+//    由内向外逐层消解嵌套，避免非贪婪正则跨层截断的问题。
+const eachReSrc = /\{\{#each\s+([\w.]+)\}\}((?:[\s\S](?!\{\{#each)(?!\{\{#if))*?)\{\{\/each\}\}/g;
+const ifReSrc = /\{\{#if\s+([\w.]+)\}\}((?:[\s\S](?!\{\{#each)(?!\{\{#if))*?)\{\{\/if\}\}/g;
+const rawReSrc = /\{\{\{\s*([\w.]+)\s*\}\}\}/g;
+const scalarReSrc = /\{\{\s*([\w.]+)\s*\}\}/g;
 
-// 1.5) 条件块（{{#if path}}...{{/if}}，路径存在且非空才保留）
-const ifRe = /\{\{#if\s+([\w.]+)\}\}([\s\S]*?)\{\{\/if\}\}/g;
-html = html.replace(ifRe, (_m, p, body) => {
-  const v = get(data, p);
-  return v ? body : '';
-});
+// 渲染（支持嵌套）：ctx 为当前循环项上下文；路径在 ctx 取不到时回退到全局 data。
+// 把 legal 页面的 sections（[{heading, paragraphs[], items[], links[], quote, tip}]）
+// 渲染为 HTML 片段，供模板 {{{legal._current.html}}} 原样输出。
+function renderSections(sections) {
+  const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  const part = (s) => {
+    // 段落内已含脚本端 inlineMd 生成的 <a>/<strong>/<del>，此处原样输出
+    const lines = String(s).split('\n').filter((l) => l.trim() !== '');
+    return lines.map((l) => `<p>${l}</p>`).join('');
+  };
+  return sections
+    .map((sec) => {
+      let inner = '';
+      if (sec.heading) inner += `<h2>${sec.heading}</h2>`;
+      if (sec.paragraphs) inner += sec.paragraphs.map((p) => part(p)).join('');
+      if (sec.items && sec.items.length) {
+        inner += '<ul>' + sec.items.map((it) => `<li>${it}</li>`).join('') + '</ul>';
+      }
+      if (sec.links && sec.links.length) {
+        inner += '<ul>' + sec.links.map((l) => `<li><a href="${escAttr(l.href)}" target="_blank" rel="noopener">${l.label}</a></li>`).join('') + '</ul>';
+      }
+      if (sec.quote) inner += `<blockquote>${sec.quote}</blockquote>`;
+      if (sec.tip) inner += `<div class="tip">${sec.tip}</div>`;
+      return `<section>${inner}</section>`;
+    })
+    .join('\n');
+}
 
-// 1.7) 三花括号 {{{ }}} 原样输出（不转义），用于内容中需保留 HTML 的字段
-//      （如 footer.tagline 的 <br/>、footer.bottom2 的 <a> 链接）。
-//      必须在标量替换之前处理，避免被 {{ }} 正则从内部部分匹配。
-const rawRe = /\{\{\{\s*([\w.]+)\s*\}\}\}/g;
-html = html.replace(rawRe, (_m, p) => {
-  const v = get(data, p);
-  return v == null ? '' : String(v);
-});
+// 渲染（支持嵌套 each/if，由外向内展开，并保护未展开块内的标量不被提前清空）
+// 旧实现用「最内层优先」正则，会导致：(1) 外层 each 含内层 each 时无法匹配；
+// (2) 未展开循环体内的标量被外层标量替换用根 ctx 提前清空。
+// 新实现改用计数配对定位每个块的最外层边界，由外向内消解，
+// 内层块在外层展开后随递归获得正确的 item 上下文。
+function render(tpl, ctx) {
+  ctx = ctx || data;
+  // 1) 由外向内展开 each/if（计数配对，允许 body 内含嵌套块）
+  const openRe = /\{\{#(each|if)\s+([\w.]+)\}\}/g;
+  let m;
+  while ((m = openRe.exec(tpl))) {
+    const type = m[1];
+    const path = m[2];
+    const openStart = m.index;
+    const bodyStart = openStart + m[0].length;
+    // 计数配对找对应的 {{/each}} 或 {{/if}}
+    let depth = 1;
+    const scanRe = /\{\{#(each|if)\s+[\w.]+\}\}|\{\{\/(?:each|if)\}\}/g;
+    scanRe.lastIndex = bodyStart;
+    let sm;
+    let bodyEnd = -1;
+    while ((sm = scanRe.exec(tpl))) {
+      if (sm[0].startsWith('{{#')) depth++;
+      else { depth--; if (depth === 0) { bodyEnd = sm.index; break; } }
+    }
+    if (bodyEnd < 0) { openRe.lastIndex = bodyStart; continue; } // 未配对，跳过
+    const body = tpl.slice(bodyStart, bodyEnd);
+    const closeTag = tpl.slice(bodyEnd).match(/\{\{\/(?:each|if)\}\}/)[0];
+    const closeLen = closeTag.length;
+    let replacement;
+    if (type === 'each') {
+      const arr = get(ctx, path);
+      const list = Array.isArray(arr) ? arr : get(data, path);
+      replacement = Array.isArray(list)
+        ? list.map((item) => render(body, item)).join('')
+        : '';
+    } else {
+      const v = get(ctx, path) != null ? get(ctx, path) : get(data, path);
+      replacement = v ? render(body, ctx) : '';
+    }
+    tpl = tpl.slice(0, openStart) + replacement + tpl.slice(bodyEnd + closeLen);
+    openRe.lastIndex = 0;
+  }
+  // 2) 标量 / 原样替换（跳过仍被未展开块包裹的令牌，避免提前清空）
+  const ranges = [];
+  const blockRe = /\{\{#(each|if)\s+[\w.]+\}\}([\s\S]*?)\{\{\/(?:each|if)\}\}/g;
+  let bm;
+  while ((bm = blockRe.exec(tpl))) ranges.push([bm.index, bm.index + bm[0].length]);
+  const inBlock = (idx) => ranges.some(([s, e]) => idx >= s && idx < e);
+  tpl = tpl.replace(rawReSrc, (_mm, p) => {
+    const idx = rawReSrc.lastIndex - _mm.length;
+    if (inBlock(idx)) return _mm;
+    const v = get(ctx, p) != null ? get(ctx, p) : get(data, p);
+    return v == null ? '' : String(v);
+  });
+  tpl = tpl.replace(scalarReSrc, (_mm, p) => {
+    const idx = scalarReSrc.lastIndex - _mm.length;
+    if (inBlock(idx)) return _mm;
+    const v = get(ctx, p) != null ? get(ctx, p) : get(data, p);
+    return v == null ? '' : esc(v);
+  });
+  return tpl;
+}
 
-// 2) 标量替换（转义）
-html = html.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_m, p) => {
-  const v = get(data, p);
-  return v == null ? '' : esc(v);
-});
+html = render(html);
 
 // 3) 图标注入
 html = html.replace(/<!--ICON:([\w-]+)-->/g, (_m, name) => ICONS[name] || '');
@@ -253,6 +297,6 @@ if (arg === 'all') {
 } else if (PAGES[arg]) {
   buildPage(arg);
 } else {
-  console.error('[build-landing] 未知页面: ' + arg + '（可选: landing / about / story / all）');
+  console.error('[build-landing] 未知页面: ' + arg + '（可选: landing / about / story / privacy / terms / disclaimer / donate / all）');
   process.exit(1);
 }

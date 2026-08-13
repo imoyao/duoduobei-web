@@ -1,38 +1,43 @@
-# 多多贝落地页 · 文案唯一可编辑源
-# 仅含「可见文案」。结构 / SVG 艺术 / 配色见 landing.template.html 与脚本。
-# 修改此处后运行：pnpm run build:landing
-
 brand: 多多贝
 brandSub: 投资账本
-brandBeta: "Beta 预览版"
-
-# 跳转目标唯一可编辑源（B 方案：所有外跳链接收口到此处，模板用 {{links.*}} 渲染）
+brandBeta: Beta 预览版
 links:
-  app: "https://app.duoduobei.com"
-  temperature: "https://app.duoduobei.com/temperature"
-  explore: "https://app.duoduobei.com/explore"
-  home: "https://duoduobei.com"
-  personality: "https://duoduobei.com/personality/"
-  feedback: "https://feedback.duoduobei.com"
-  donate: "https://duoduobei.com/donate/"
-  docsPrivacy: "https://docs.duoduobei.com/privacy/"
-  docsDisclaimer: "https://docs.duoduobei.com/disclaimer/"
-  github: "https://github.com/imoyao"
-
+  app: https://app.duoduobei.com
+  temperature: https://app.duoduobei.com/temperature
+  explore: https://app.duoduobei.com/explore
+  home: https://duoduobei.com
+  personality: https://duoduobei.com/personality/
+  feedback: https://feedback.duoduobei.com
+  donate: /donate.html
+  docsPrivacy: /privacy.html
+  docsDisclaimer: /disclaimer.html
+  terms: /terms.html
+  github: https://github.com/imoyao
+# 全局版权行（所有页面 footer 共用，单一真相，避免散落硬编码）
+site:
+  copyright1: © 2026 多多贝 duoduobei · 不荐股 · 不跟单 · 数据主权
+  copyright2: '<a href="https://github.com/imoyao" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">GitHub</a>'
 nav:
   links:
-    - { label: 核心能力, href: "#features" }
-    - { label: 支持导入, href: "#ecosystem" }
-    - { label: 适用场景, href: "#scenarios" }
-    - { label: 免费探市, href: "#explore" }
-    - { label: 为什么不同, href: "#compare" }
-    - { label: 诚实承诺, href: "#honesty" }
-    - { label: 品牌故事, href: "story.html" }
-    - { label: 关于我们, href: "about.html" }
+    - label: 核心能力
+      href: '#features'
+    - label: 支持导入
+      href: '#ecosystem'
+    - label: 适用场景
+      href: '#scenarios'
+    - label: 免费探市
+      href: '#explore'
+    - label: 为什么不同
+      href: '#compare'
+    - label: 诚实承诺
+      href: '#honesty'
+    - label: 品牌故事
+      href: story.html
+    - label: 关于我们
+      href: about.html
   cta: 免费开始
-
 hero:
-  tag: "投资账本 · 数据主权"
+  tag: 投资账本 · 数据主权
   titleBefore: 看见你的
   titleCoral: 复利增长
   sub: 一个让复利增长清晰可见的投资账本
@@ -42,62 +47,68 @@ hero:
     - 算准 XIRR
   ctaPrimary: 免费开始
   ctaSecondary: 了解功能
-  note: "不连接券商账户 · 不自动抓取 · 交易记录可一键导出"
+  note: 不连接券商账户 · 不自动抓取 · 交易记录可一键导出
   trust:
-    - { k: XIRR, v: "精确到日，真实年化收益" }
-    - { k: "0", v: "广告 · 不开屏 · 不荐股" }
-    - { k: "100%", v: "数据由你手动录入 / 导入" }
-    - { k: 一键, v: "导出交易记录（CSV）" }
-
+    - k: XIRR
+      v: 精确到日，真实年化收益
+    - k: '0'
+      v: 广告 · 不开屏 · 不荐股
+    - k: 100%
+      v: 数据由你手动录入 / 导入
+    - k: 一键
+      v: 导出交易记录（CSV）
 features:
   eyebrow: 核心能力
   title1: 六大核心能力，
   title2: 算清你的投资账本
   lead: 从归集到复盘，每一步都围绕一个目标：让你看到真实的收益数字。
-
 core:
-  - num: "01"
+  - num: '01'
     tone: coral
     icon: layers
     title: 多账户归集合并
     desc: 股票、基金、理财散落在不同券商和平台，总收益一笔糊涂账。手动归集全量资产与交易，合并计算真实收益率——不再需要三个 App 反复切换对账。
-  - num: "02"
+  - num: '02'
     tone: fall
     icon: trending-up
     title: XIRR 精确年化
     desc: 券商 App 的「累计收益」只是个绝对值，不反映资金进出的时间。自动算 XIRR（精确到日），真实的年化收益一眼就能看清。
-  - num: "03"
+  - num: '03'
     tone: coral-light
     icon: list
     title: 全交易类型记录
     desc: 分红、配股、手续费、逆回购……每一笔都影响真实成本。全类型记录，成本一笔笔算准，全部纳入 XIRR 计算。
-  - num: "04"
+  - num: '04'
     tone: coral
     icon: upload
     title: 免密码交割单导入
     desc: 上传 CSV / PDF 交割单即可导入，无需输入券商账号密码。支持支付宝、天天基金、同花顺等主流平台，更多平台持续接入——数据怎么来，你说了算。
-  - num: "05"
+  - num: '05'
     tone: fall
     icon: info
     title: 算法透明可追溯
     desc: 同口径展示 XIRR（资金加权，精确到日），每笔现金流与每日资产变动都可追溯。基于公开标准（Excel XIRR 同源），不偷偷调算法美化收益。
-  - num: "06"
+  - num: '06'
     tone: coral-light
     icon: shield
     title: 数据主权保障
     desc: 数据存在云端，主权归你：交易记录一键导出 CSV、随时可带走；无广告、不开屏、不荐股、不导流理财。你的交易记录，由你掌控。
-
 eco:
   headTitle: 一份交割单，直接读懂你的账
   headSub: 支持 CSV / Excel 导入，无需输入券商账号密码
   logos:
-    - { name: 支付宝, icon: "logos/alipay.svg" }
-    - { name: 天天基金, icon: "logos/tiantianjijin.svg" }
-    - { name: 同花顺, icon: "logos/tonghuashun.svg" }
-    - { name: 腾讯理财通, icon: "logos/tencentwm.svg" }
-    - { name: 标准导入模板, icon: "logos/stock.svg" }
-  texts: [更多平台，敬请期待]
-
+    - name: 支付宝
+      icon: logos/alipay.svg
+    - name: 天天基金
+      icon: logos/tiantianjijin.svg
+    - name: 同花顺
+      icon: logos/tonghuashun.svg
+    - name: 腾讯理财通
+      icon: logos/tencentwm.svg
+    - name: 标准导入模板
+      icon: logos/stock.svg
+  texts:
+    - 更多平台，敬请期待
 scenarios:
   eyebrow: 适用场景
   title1: 每个投资者，
@@ -106,31 +117,31 @@ scenarios:
   items:
     - tone: coral
       icon: monitor
-      tag: "独立开发者 · FIRE 践行者"
+      tag: 独立开发者 · FIRE 践行者
       title: 数据主权优先
       desc: 不连券商，数据存在云端、主权归你。XIRR 算出来那一刻，就知道这半年折腾到底值不值。
       kit: 开发者专属工作流
     - tone: blue
       icon: user
-      tag: "上班族 · 基金定投"
+      tag: 上班族 · 基金定投
       title: 家人也能看懂
       desc: 推荐给父母记基金，第一次看懂真实收益率。以前只知道「赚了」或「亏了」，现在能说出具体数字——原来那只「明星基」其实跑输通胀。
       kit: 家庭记账套件
     - tone: green
       icon: users
-      tag: "追牛猎手 · 多账户持有者"
+      tag: 追牛猎手 · 多账户持有者
       title: 三个券商合并算
       desc: 三个券商的账户记了大半年，以前每家说的收益都不一样，搞不清哪个对。现在合并在一起算，终于知道退休金的真实回报率是多少。
       kit: 多账户归集
     - tone: purple
       icon: activity
-      tag: "混合投资者 · 股票+基金"
+      tag: 混合投资者 · 股票+基金
       title: 分红再投不再盲区
       desc: 分红再投一直是我记账的盲区，手动算成本太麻烦。多多贝把分红自动纳入 XIRR 计算，省了每周日对账的时间。
       kit: 全类型交易记录
     - tone: amber
       icon: file
-      tag: "财务爱好者 · 记账达人"
+      tag: 财务爱好者 · 记账达人
       title: 算法透明不玩黑盒
       desc: 同花顺显示 12.69% 却不解释怎么算出来的。多多贝 XIRR 口径透明、精确到日，每笔现金流可追溯，账算得清清楚楚。
       kit: 专业复盘工具
@@ -142,7 +153,7 @@ scenarios:
       kit: 隐私优先设计
     - tone: blue
       icon: grad-cap
-      tag: "学生 · 理财新手"
+      tag: 学生 · 理财新手
       title: 第一笔定投从零算
       desc: 第一次记账也能看懂。XIRR 自动算，定投成本一笔笔摊平，少走新手弯路，不被「复利神话」忽悠。
       kit: 新手起步套件
@@ -153,16 +164,15 @@ scenarios:
       desc: 可转债的申购、转股、赎回各有成本。全类型流水可记，成本一笔笔并入 XIRR，转股时的真实收益也能算清。
     - tone: green
       icon: layers
-      tag: "指数基金党 · ETF 定投"
+      tag: 指数基金党 · ETF 定投
       title: 定投成本摊薄
       desc: 周定投、月定投的成本怎么摊？XIRR 自动加权，看清定投的真实年化回报，而不是被「微笑曲线」带节奏。
     - tone: teal
       icon: shield-check
-      tag: "长期持有 · 养老年金"
+      tag: 长期持有 · 养老年金
       title: 穿越牛熊的回报
       desc: 长期持有的年金，用 XIRR 看穿越周期的真实年化——不是某一年暴涨的数字，是十年里每一笔的加权。
       kit: 长期视角
-
 explore:
   eyebrow: 免费探市
   title: 免费的市场温度计
@@ -183,7 +193,6 @@ explore:
   ctaTemperature: 看市场温度
   ctaExplore: 进入探市
   note: 基础数据免费免登录；自建分析指标（行业拥挤度 / 乖离率）需登录后查看。
-
 compare:
   eyebrow: 为什么不同
   title: 同样是投资记账，差距在算得准不准
@@ -193,54 +202,52 @@ compare:
   colOther: 普通记账 App
   rows:
     - capability: XIRR 真实年化（精确到日）
-      us: "✓ 内置计算"
-      other: "✗ 多只看累计收益"
+      us: ✓ 内置计算
+      other: ✗ 多只看累计收益
     - capability: 多账户合并真实收益率
-      us: "✓ 支持"
-      other: "✗ 多为单账户视图"
+      us: ✓ 支持
+      other: ✗ 多为单账户视图
     - capability: 不连接券商、不自动抓取
-      us: "✓ 数据在你手里"
-      other: "⊘ 需授权读取账户"
+      us: ✓ 数据在你手里
+      other: ⊘ 需授权读取账户
     - capability: 广告 / 开屏 / 荐股
-      us: "✓ 全无"
-      other: "⊘ 部分含广告或理财引导"
+      us: ✓ 全无
+      other: ⊘ 部分含广告或理财引导
     - capability: 交易记录一键导出
-      us: "✓ CSV 自由导出"
-      other: "⊘ 导出受限或付费"
+      us: ✓ CSV 自由导出
+      other: ⊘ 导出受限或付费
     - capability: 收益率算法透明（XIRR 资金加权，精确到日）
-      us: "✓ 口径透明 + 每笔现金流可追溯"
-      other: "✗ 单一黑盒数值，不解释算法"
-
+      us: ✓ 口径透明 + 每笔现金流可追溯
+      other: ✗ 单一黑盒数值，不解释算法
 honesty:
   eyebrow: 诚实承诺
   title: 我们选择说实话，即使这并不讨好
   lead: 很多产品只展示自己好的一面。我们觉得，你应该知道这个工具擅长什么、不擅长什么。
   items:
     - icon: activity
-      cls: ""
+      cls: ''
       title: 计算口径诚实
       desc: XIRR 精确到日、资金加权，不含未实现浮盈的误导性美化。我们算的是你真实的持仓回报率，不是模拟出来的漂亮数字。
     - icon: shield
-      cls: ""
+      cls: ''
       title: 数据主权
       desc: 数据存于云端，主权归你：交易记录一键导出 CSV、随时可带走，也不用于任何营销或广告。你的交易记录，由你掌控。
     - icon: rect
-      cls: ""
+      cls: ''
       title: 不靠广告变现
       desc: 无开屏广告、无信息流广告、不导流理财。我们的商业模式不依赖你的注意力，所以不需要用广告打断你。
     - icon: circle-x
-      cls: ""
+      cls: ''
       title: 不荐股不跟单
       desc: 纯工具，不做任何投资建议，不做跟单社区。我们不告诉你买什么卖什么——那是你的决定，不是我们的。
     - icon: file-text
-      cls: ""
+      cls: ''
       title: 算法透明
       desc: 同口径同步展示 XIRR（资金加权，精确到日），每笔现金流与每日资产变动都可追溯。基于公开标准（Excel XIRR 同源），不会偷偷调整算法来美化你的收益曲线。算就是算，不玩花活。
     - icon: info
       cls: limitation
       title: 我们也做不到的事
       desc: 不支持期货/加密货币实时估值；分红再投需手动标记；不支持自动同步券商交割单（这是刻意的设计选择，不是技术限制）。这些已知边界会持续公开。
-
 story:
   title: 为什么做这件事
   lead: 我们每一个置身市场的人，何尝不是潜入自己的深海。市场的脉冲是海面上的狂风骤雨，而真实的资产价值，始终藏在暗流里。
@@ -248,7 +255,6 @@ story:
   ctaHref: story.html
   sidebarTitle: 我们的立场
   sidebarText: 我们不荐股、不跟单、不预测市场——只帮你把账算清楚。买还是卖？你自己判断。
-
 pro:
   eyebrow: 专业复盘
   title: 大厂工具缺的那口气，我们补上
@@ -260,28 +266,26 @@ pro:
     - icon: chart
       title: 回撤分布曲线，不只是极值
       desc: 不只标一个"最大回撤"。绘制连续回撤曲线，让你看到一波波行情中每次颠簸的轮廓——真正有用的不是最惨的那一次，是分布。
-
 testimonials:
   eyebrow: 用户怎么说
   title: 不同的人，同一个问题：我的真实收益到底是多少？
   items:
     - avatar: 周
       name: FIRE路上的老周
-      role: "独立开发者 · FIRE理念践行者"
-      quote: "我最在意的就一件事：数据主权。多多贝不连券商，数据虽然在云端，但是归我自己掌控，随时可以导出保存本地。XIRR 一出来，我才知道这半年瞎折腾到底值不值。"
+      role: 独立开发者 · FIRE理念践行者
+      quote: 我最在意的就一件事：数据主权。多多贝不连券商，数据虽然在云端，但是归我自己掌控，随时可以导出保存本地。XIRR 一出来，我才知道这半年瞎折腾到底值不值。
     - avatar: 琳
       name: 养基少女Linda
-      role: "上班族 · 基金投资者"
-      quote: "我让我妈用多多贝记基金，她头一回看清自己的真实收益率。以前她只会说'赚'或'亏'，现在能报出具体数字——那只被吹上天的'明星基'，其实连通胀都没跑赢。"
+      role: 上班族 · 基金投资者
+      quote: 我让我妈用多多贝记基金，她头一回看清自己的真实收益率。以前她只会说'赚'或'亏'，现在能报出具体数字——那只被吹上天的'明星基'，其实连通胀都没跑赢。
     - avatar: 张
       name: 爱记账的张阿姨
-      role: "退休大妈 · 多账户持有者"
-      quote: "我三个券商的账户记了小半年，每家报的收益都不一样，越看越糊涂。合到一块儿一算，我才弄清退休金真实的年化回报到底是多少。"
+      role: 退休大妈 · 多账户持有者
+      quote: 我三个券商的账户记了小半年，每家报的收益都不一样，越看越糊涂。合到一块儿一算，我才弄清退休金真实的年化回报到底是多少。
     - avatar: 陈
       name: 量化民工阿Chen
-      role: "朋友 · 股票+基金混合"
-      quote: "分红再投以前是我记账的死角，手动摊成本太费劲。多多贝把分红自动算进 XIRR，我周日再也不用趴桌上对账了。"
-
+      role: 朋友 · 股票+基金混合
+      quote: 分红再投以前是我记账的死角，手动摊成本太费劲。多多贝把分红自动算进 XIRR，我周日再也不用趴桌上对账了。
 privacy:
   eyebrow: 隐私与技术
   title: 你的数据，只属于你
@@ -299,31 +303,40 @@ privacy:
     - icon: download
       title: 支持一键导出
       desc: 随时导出交易记录（CSV），数据始终在你手里。
-
 cta:
   title: 把账算明白，从今天开始
   text: 不荐股、不跟单、不预测市场——只帮你算清真实收益。
   btn: 免费开始
-
 footer:
   tagline: 记账即复利。<br/>多多贝，贝倍多——有备无患，贝自倍多。
   productLinks: []
-  aboutLinks:
-    - { label: 品牌故事, href: "story.html" }
-    - { label: 关于我们, href: "about.html" }
-    - { label: 投资人格测试, href: "{{links.personality}}" }
-    - { label: GitHub, href: "{{links.github}}" }
-    - { label: 意见反馈, href: "{{links.feedback}}" }
-    - { label: 隐私政策, href: "{{links.docsPrivacy}}" }
-    - { label: 免责声明, href: "{{links.docsDisclaimer}}" }
-    - { label: 赞赏作者, href: "{{links.donate}}" }
-  bottom1: "© 2026 多多贝 duoduobei · 不荐股 · 不跟单 · 数据主权"
-  bottom2: "<a href=\"{{links.github}}\" style=\"color:inherit;text-decoration:underline;text-underline-offset:3px;\">GitHub</a>"
-
-# ===== About 品牌页文案（章节结构与 docs/site/about.md 对齐，文案可自由润色美化） =====
+  # 三栏导航（仅重新分栏，链接维持原有 8 个，不增删不改名）
+  columns:
+    - title: 关于多多贝
+      links:
+        - label: 品牌故事
+          href: story.html
+        - label: 关于我们
+          href: about.html
+        - label: 投资人格测试
+          href: '{{links.personality}}'
+    - title: 社区与反馈
+      links:
+        - label: GitHub
+          href: '{{links.github}}'
+        - label: 意见反馈
+          href: '{{links.feedback}}'
+        - label: 赞赏作者
+          href: '{{links.donate}}'
+    - title: 法律与条款
+      links:
+        - label: 隐私政策
+          href: '{{links.docsPrivacy}}'
+        - label: 服务条款
+          href: '{{links.terms}}'
+        - label: 免责声明
+          href: '{{links.docsDisclaimer}}'
 about:
-  heroTitle: 关于多多贝
-  heroSub: 一款帮你算清真实收益、让复利增长清晰可见的投资账本。
   blocks:
     - id: what
       kind: plain
@@ -338,28 +351,44 @@ about:
       kind: soft
       title: 缘起
       paragraphs:
-        - 作为一个低风险（小富即安）投资者，一直有"钱都去哪儿了"的困扰——于是想做一个真正好用的基金记账工具，把每笔账都算明白。
-      storyLink: { label: 完整品牌故事 →, href: "story.html" }
+        - 作为一个低风险（<del>小富即安</del>）投资者，一直有"钱都去哪儿了"的困扰。记账类 App 已经很多，但专门做好基金理财记账的，却始终没能让人满意。
+        - >-
+          网上看到 <a href="https://dbanotes.net/arch/caibangzi_web_arch.html" target="_blank" rel="noopener">财帮子</a>
+          被网友念念不忘，便动了念头，想做一个真正好用的基金记账工具 —— Fund Manage Platform/Plan，项目曾暂定名为 <a href="https://github.com/imoyao/FMP"
+          target="_blank" rel="noopener">FMP</a>。多多贝是它一步步长成今天的样子。
+      storyLink:
+        label: 完整品牌故事 →
+        href: story.html
     - id: opensource
       kind: plain
       title: 关于开源
       paragraphs:
         - 本人是开源精神的受益者，也是拥护者。多多贝在创作过程中，离不开无数开源项目的分享。
-        - 同时，我们也理解当前开源社区普遍面临的现实：投入与回报常常不成正比，"开源 = 白嫖"的心态并不少见。因此，目前暂不开放整个软件的源码；如果你需要部分功能的实现思路，可以通过赞赏作者或参与文档与建议贡献的方式获取支持。
+        - >-
+          同时，我们也理解当前开源社区普遍面临的现实：投入与回报常常不成正比，"开源 = 白嫖"的心态并不少见（可参阅 <a href="https://zhuanlan.zhihu.com/p/45653912"
+          target="_blank" rel="noopener">京东抄我的开源程序怎么办？ - 知乎</a>、<a
+          href="https://mp.weixin.qq.com/s/QsDhNDL3Vn93F4pNI7Yy7w" target="_blank" rel="noopener">Elasticsearch 与 Kibana
+          更改开源协议 - 微信</a>）。因此，目前暂不开放整个软件的源码。如果你需要部分功能的实现思路，可以通过<a href="/donate/" target="_blank"
+          rel="noopener">赞赏作者</a>或参与<a href="/todo/" target="_blank"
+          rel="noopener">文档与建议贡献</a>的方式获取支持；相信通过这一系列记录文章，你也能有所收获。
       quote: 好的开源生态，需要享用便利的人也愿意回馈。单向的索取，只会让愿意分享的人越来越少。
     - id: sustain
       kind: coral
+      tone: coral
       title: 如何持续下去
       paragraphs:
-        - 谈开源，也绕不开怎么让一件事持久。多多贝会坚持基础记账功能（含账单导出）长期免费。但一款软件要持续维护，只靠热爱是不够的——
+        - 谈开源，也绕不开怎么让一件事持久。多多贝会坚持<strong>基础记账功能（含账单导出）长期免费</strong>。但一款软件要持续维护，只靠热爱是不够的——
+        - 所以我们选择了一条实在的路：
+        - <a href="https://www.zhihu.com/question/22084816" target="_blank" rel="noopener">为什么说「免费的其实是最贵的」？ - 知乎</a>
       links:
-        - { label: 财帮子的所有者还打算继续办下去么？, href: "https://www.zhihu.com/question/29603361" }
-        - { label: 网易有钱 App 下线公告, href: "https://1.163.com/html/qian/web/5fdaffaed605e84a6d118cd4.html" }
-        - { label: 雪球"模拟盈亏"功能下线公告, href: "https://xueqiu.com/6123409880/150393232" }
+        - label: 财帮子的所有者还打算继续办下去么？ - 知乎
+          href: https://www.zhihu.com/question/29603361
+        - label: 网易有钱 App 下线公告
+          href: https://1.163.com/html/qian/web/5fdaffaed605e84a6d118cd4.html
+        - label: 雪球"模拟盈亏"功能下线公告 - 雪球
+          href: https://xueqiu.com/6123409880/150393232
       tip: 如果多多贝对你有帮助，我们鼓励你在能力范围内付费支持；如果觉得它一文不值，来去随宜，也完全没关系。付费与否，都不影响你使用免费的基础功能。
       quote: 如果用户没有付钱，那么用户往往就是商品。这也是我们坚持"基础免费、增值可选"的原因——不靠贩卖你的数据，而靠认可我们的人。
-
-# ===== 品牌故事页（唯一文案源：用户提供的下潜长文） =====
 brandStory:
   heroTitle: 为什么做多多贝？
   heroSub: 阳光穿过浅海，照亮珊瑚森林；下潜 800 米，遇见在幽暗中保持平衡的鹦鹉螺。
@@ -384,12 +413,14 @@ brandStory:
       - 于是我开始自问：那我到底该怎么做，才算是"有备无患"？
       - 答案很朴素——别急着预测下一个浪头，先把潮水涌来时自己到底站在哪算清楚。
       - 做多多贝的起点，是我自己首先算不清自己的账了。手里好几个券商和基金账户，满屏浮盈。涨潮时觉得自己是天才，退潮时才发现连资金进出都是一笔糊涂账。
-      - 于是我写了个极简的脚本。不直连账户，只导入交易记录 CSV，输出一个最直接的数字：XIRR。它不跟市场脉搏跳动，只告诉你一个坐标——你真实的复利轨迹，到底在哪。算完之后，它还会把你的持仓结构摊开来看：单只标的占比是不是过高？波动有没有超出你能承受的底线？这些硬数据，比任何浮盈都更能回答一个问题——你到底安不安全。
+      - >-
+        于是我写了个极简的脚本。不直连账户，只导入交易记录
+        CSV，输出一个最直接的数字：XIRR。它不跟市场脉搏跳动，只告诉你一个坐标——你真实的复利轨迹，到底在哪。算完之后，它还会把你的持仓结构摊开来看：单只标的占比是不是过高？波动有没有超出你能承受的底线？这些硬数据，比任何浮盈都更能回答一个问题——你到底安不安全。
   friend:
     paragraphs:
       - 后来我把它分享给一位朋友。他跟投了一个号称"十年十倍"的投资组合。
       - 结果数据拉出来，他盯着那个数字沉默了许久，然后叹了口气：
-      - "八年折腾，收益还不如一笔三年期定期存款。原来一直都在闭着眼瞎投。"
+      - 八年折腾，收益还不如一笔三年期定期存款。原来一直都在闭着眼瞎投。
       - 但他停顿后补了一句："好在，今天总算不是裸泳了。"
       - 那一刻我意识到，对大多数人来说，真正需要的不是能预知市场的"神技"，而是看清市场真相后，那种不会再被潮水裹挟的定力。
   closing:
@@ -398,3 +429,202 @@ brandStory:
       - 我们不荐股、不跟单。所有数据由你手动录入或交割单导入，主权归你，随时可一键导出带走。我们不做带你追浪的弄潮儿，只用数据的事实说话，做一把诚实的度尺。
     rhyme:
       - 潮有涨落，壳有深浅。算得清，才无患。
+legal:
+  privacy:
+    title: privacy
+    sections:
+      - heading: 隐私政策
+        paragraphs:
+          - |-
+            <strong>更新日期</strong>：2026 年 7 月 19 日
+            <strong>生效日期</strong>：2026 年 7 月 19 日
+          - 欢迎使用 <strong>多多贝</strong>（包括网站及相关的产品服务，以下简称“本产品”）。本产品由 <strong>imoyao</strong>（以下简称“我们”）开发并运营。
+          - >-
+            本产品是一个<strong>个人投资记账与资产分析工具</strong>，核心定位是<strong>数据本地存储、用户自主可控、不依赖云端服务</strong>。我们深知财务数据的敏感性和私密性，<strong>保护您的数据隐私是我们的首要原则</strong>。
+          - >-
+            请您在使用本产品前仔细阅读并充分理解本隐私政策的全部内容。一旦您选择使用，即视为您同意本政策。如您有任何疑问，可通过 <strong>&lt;imsantu@126.com&gt;</strong>
+            或产品内的反馈渠道与我们联系。如您不同意本政策的任何条款，请停止使用本产品。
+          - 本隐私政策将帮助您了解以下内容：
+        items:
+          - 我们如何收集和使用您的个人信息
+          - 我们如何存储和保护您的个人信息
+          - 我们如何共享、转让、公开披露您的个人信息
+          - 您如何管理您的个人信息
+          - 我们如何使用 Cookie 和其他追踪技术
+          - 本政策的更新与联系方式
+      - heading: 一、我们如何收集和使用您的个人信息
+        paragraphs:
+          - 个人信息是指以电子或者其他方式记录的能够单独或者与其他信息结合识别特定自然人身份或者反映特定自然人活动情况的各种信息。
+          - 我们严格遵循<strong>合法、正当、必要</strong>的原则，仅在本产品正常运行所必需的范围内收集和使用您的个人信息。
+          - '### 1.1 您主动提供的信息'
+          - '### 1.2 我们自动收集的信息'
+          - '### 1.3 我们<strong>不会</strong>收集的信息'
+          - 我们<strong>不会</strong>收集以下类型的个人信息：
+          - '### 1.4 信息收集的特别说明'
+          - >-
+            <strong>与商业记账软件不同，本产品的核心设计理念是“数据本地优先”</strong>。您的所有财务数据——包括持仓、交易、资产、负债等——<strong>默认仅存储在您本地设备的 SQLite
+            数据库中</strong>。我们不会主动将您的数据上传至任何云端服务器，也不会在未经您明确授权的情况下通过网络传输您的财务数据。
+          - 我们仅收集上述“1.1”和“1.2”中所述的最少量信息，用于产品的基本运行、账号管理和故障排查。<strong>您在使用过程中主动录入的财务数据，完全由您自己掌控。</strong>
+        items:
+          - <strong>注册信息</strong>：当您注册本产品账号时，您需要提供<strong>电子邮箱地址</strong>作为登录凭证。我们可能通过发送验证邮件的方式来验证您的身份。
+          - >-
+            <strong>资产与交易数据</strong>：您在使用本产品进行记账、资产录入、导入数据等操作时，您主动输入的<strong>投资持仓、交易流水、资产负债</strong>等财务数据。<strong>这些数据仅存储在您本地设备或您指定的存储位置，我们不会上传至任何云端服务器。</strong>
+          - <strong>联系方式</strong>：如您通过邮件或产品内反馈渠道与我们联系，我们可能会保存您的联系方式及通信内容，以便处理您的问题。
+          - <strong>设备基本信息</strong>：在您访问本产品时，我们可能会收集您的<strong>浏览器类型、操作系统版本、屏幕分辨率</strong>等基础信息，用于优化产品在不同设备上的显示效果。
+          - <strong>日志信息</strong>：当您使用本产品时，我们可能会自动记录您的<strong>访问时间、访问页面、IP 地址</strong>等技术日志，用于排查产品故障和保障系统运行安全。
+          - 您的真实姓名、身份证号、手机号码（注册仅需邮箱）
+          - 您的生物识别信息（指纹、人脸等）
+          - 您的通讯录、短信、通话记录
+          - 您的精确地理位置
+          - 您的设备唯一标识符（IMEI、Android ID、MAC 地址等）
+      - heading: 二、我们如何存储和保护您的个人信息
+        paragraphs:
+          - '### 2.1 存储位置与期限'
+          - '### 2.2 安全保护措施'
+          - '### 2.3 数据导出与删除'
+        items:
+          - >-
+            <strong>财务数据</strong>：您的资产、持仓、交易等财务数据<strong>默认存储在您本地设备的 SQLite
+            数据库文件中</strong>，存储位置由您自行决定。您可以随时备份、导出或删除这些数据。
+          - <strong>账号信息</strong>：您的注册邮箱等账号信息，我们会将其与您的本地数据库关联存储。
+          - <strong>存储期限</strong>：我们仅在实现信息收集目的所需的最短时间内保留您的个人信息。当您主动注销账号或删除数据时，相关信息将被移除。
+          - 我们使用符合业界标准的安全防护措施保护您的个人信息，并加密其中的关键数据，防止其遭到未经授权的访问、公开披露、使用、修改、损坏或丢失。
+          - 我们会采取一切合理可行的措施保护您的个人信息。我们会使用加密技术确保数据的保密性。
+          - <strong>由于本产品的财务数据默认存储在您的本地设备上，数据的安全性也取决于您自身对设备的保护</strong>（如设备密码、防病毒软件、数据备份等）。建议您定期备份本地数据库文件，以防设备故障导致数据丢失。
+          - 您可以随时通过产品功能导出您的全部数据（支持标准格式导出）。
+          - 如您确认不再使用本产品，并按照要求主动注销您的账号，您的相关数据将被删除。
+      - heading: 三、我们如何共享、转让、公开披露您的个人信息
+        paragraphs:
+          - '### 3.1 我们不会与任何第三方分享您的个人信息'
+          - <strong>我们承诺：我们不会将您的个人信息（包括财务数据）出售、出租、共享或转让给任何第三方，除非：</strong>
+          - '### 3.2 以下情形中共享、转让、公开披露您的个人信息无需事先征得您的授权同意'
+          - '### 3.3 第三方服务'
+          - >-
+            本产品目前<strong>不集成任何第三方 SDK 或第三方分析服务</strong>（如友盟、Google Analytics
+            等），因此不存在第三方自动收集您个人信息的情况。如未来因业务需要引入第三方服务，我们会提前在本政策中说明，并征得您的同意。
+        items:
+          - 获得您的明确同意；
+          - 法律法规另有规定；
+          - 按政府主管部门的强制性要求（如传票、调查函等法律文件）。
+          - 与国家安全、国防安全直接相关的；
+          - 与公共安全、公共卫生、重大公共利益直接相关的；
+          - 与犯罪侦查、起诉、审判和判决执行等直接相关的；
+          - 出于维护您或其他个人的生命、财产等重大合法权益但又很难得到本人同意的；
+          - 您自行向社会公众公开的个人信息；
+          - 从合法公开披露的信息中收集个人信息的，如合法的新闻报道、政府信息公开等渠道；
+          - 法律法规规定的其他情形。
+      - heading: 四、您如何管理您的个人信息
+        paragraphs:
+          - 您对自己在本产品中的个人信息享有以下权利：
+          - 如您需要行使上述权利，可通过产品内功能直接操作，或通过 <strong>&lt;imsantu@126.com&gt;</strong> 联系我们协助处理。
+        items:
+          - <strong>访问权</strong>：您可以随时查看您已录入的所有资产、持仓、交易等数据。
+          - <strong>更正权</strong>：您发现信息有误时，可以随时修改更正。
+          - <strong>删除权</strong>：您可以随时删除单条数据，或导出全部数据后删除整个数据库。
+          - <strong>导出权</strong>：您可以随时将全部数据导出为标准格式文件，自行保管或迁移。
+          - <strong>注销权</strong>：您可以随时注销您的账号，注销后相关数据将被删除。
+      - heading: 五、我们如何使用 Cookie 和其他追踪技术
+        paragraphs:
+          - 为确保产品正常运转，我们可能会在您的浏览器中存储名为 Cookie 的小数据文件。Cookie 通常包含标识符、产品名称以及一些号码和字符。
+          - 借助于 Cookie，我们能够：
+          - >-
+            我们<strong>不会</strong>将 Cookie 用于本政策所述目的之外的任何用途。您可根据自己的偏好管理或删除 Cookie。大部分浏览器都提供阻止或禁用 Cookie 的功能。但请注意，禁用
+            Cookie 后可能影响您正常使用本产品的部分功能。
+        items:
+          - 存储您的登录状态，使您无需在每次访问时重复登录；
+          - 存储您的偏好设置（如页面布局、语言等）；
+          - 提升产品服务质量和用户体验。
+      - heading: 六、本政策的更新与联系方式
+        paragraphs:
+          - '### 6.1 政策更新'
+          - 我们可能会根据法律法规的变化、产品功能的更新或业务发展的需要，对本隐私政策进行修订。修订后的政策将在本页面公布，并通过产品内通知等方式提醒您。
+          - <strong>对于重大变更</strong>（如个人信息处理目的、处理方式的改变，或数据共享范围的扩大等），我们会以更显著的方式（如弹窗、邮件通知）告知您，并获得您的重新同意。
+          - 本政策的<strong>最新版本</strong>始终发布于产品官网的 `/privacy` 页面，请您定期查阅。
+          - '### 6.2 联系我们'
+          - 如您对本隐私政策有任何疑问、建议或投诉，可通过以下方式联系我们：
+          - 我们将在收到您的反馈后 <strong>15 个工作日内</strong>予以回复。
+          - <strong>本政策自 2026 年 7 月 19 日起生效。</strong>
+        items:
+          - <strong>电子邮箱</strong>：&lt;imsantu@126.com&gt;
+          - <strong>产品内反馈渠道</strong>：您可以通过产品内的反馈功能提交您的问题
+        quote: <strong>温馨提示</strong>：本产品为本地优先的个人投资记账工具，您的财务数据默认存储在您自己的设备上。我们建议您定期备份本地数据库文件，以防设备故障导致数据丢失。数据安全，从备份开始。
+  donate:
+    title: donate
+    sections:
+      - heading: 帮助我们走得更远
+        paragraphs:
+          - 作为个人开发者，前期服务器、域名等服务支出都是本人“靠爱发电”的。虽然一直“白嫖”一直爽，但是要想网站长久运行下去，本人需要付出<strong>大量</strong>的时间优化功能以及进行日常功能维护。
+          - 所以，我们需要大家的认同和资助帮助我们走得更远。
+          - 后期，我们可能推出收费服务计划。如果部分学生群体和低收入人群觉得负担不起，该页面将用于这些用户对个人的付出表示感谢之用。
+          - |-
+            !<a href="https://www.masantu.com/img/alipay.jpg" target="_blank" rel="noopener">支付宝支付（推荐）</a>
+            !<a href="https://www.masantu.com/img/wechatpay.jpg" target="_blank" rel="noopener">微信支付</a>
+        tip: 推荐使用支付宝付款。
+  terms:
+    title: terms
+    sections:
+      - heading: 服务条款
+        paragraphs:
+          - |-
+            <strong>更新日期</strong>：2026 年 7 月 19 日
+            <strong>生效日期</strong>：2026 年 7 月 19 日
+          - >-
+            欢迎使用 <strong>多多贝</strong>（以下简称“本产品”）。本条款是您与本产品运营者
+            <strong>imoyao</strong>（以下简称“我们”）之间关于使用本产品所订立的协议。使用本产品即表示您同意以下条款。
+      - heading: 一、产品当前状态
+        paragraphs:
+          - 本产品目前为<strong>免费使用</strong>状态。我们保留未来根据运营需要调整收费模式的权利。
+      - heading: 二、收费说明
+        items:
+          - 如未来本产品开始收费，我们将在产品官网或产品内通过公告、弹窗等方式提前通知您。
+          - 收费模式可能包括但不限于：一次性购买、订阅制、增值功能付费等。具体收费标准以届时公布为准。
+          - 如您不同意收费方案，可以选择停止使用本产品，您的本地数据不会受到影响，您可随时导出。
+      - heading: 三、用户责任
+        items:
+          - 您应自行承担使用本产品所需的设备、网络等相关费用。
+          - 您应对自己录入的所有数据的真实性、准确性负责。
+          - 您使用本产品进行投资记账和分析，属于个人行为。任何投资决策均由您自行做出，<strong>我们不提供任何投资建议，也不对您的投资结果承担任何责任</strong>。
+          - 您应妥善保管您的账号密码和本地数据库文件。因您自身原因（如设备丢失、密码泄露、未备份等）导致的数据丢失或泄露，由您自行承担责任。
+      - heading: 四、禁止行为
+        paragraphs:
+          - 您不得利用本产品从事以下行为：
+        items:
+          - 上传、存储或传播任何违法、违规、侵权的内容；
+          - 尝试逆向工程、破解、攻击本产品的任何部分；
+          - 将本产品用于任何商业目的（除非获得我们明确的书面授权）；
+          - 其他违反法律法规或本协议的行为。
+      - heading: 五、条款变更
+        paragraphs:
+          - 我们可能根据产品发展需要修订本条款，修订后将在本页面公布。如您继续使用本产品，即视为接受修订后的条款。
+          - <strong>本条款自 2026 年 7 月 19 日起生效。</strong>
+  disclaimer:
+    title: disclaimer
+    sections:
+      - heading: 免责声明
+        paragraphs:
+          - |-
+            <strong>更新日期</strong>：2026 年 7 月 19 日
+            <strong>生效日期</strong>：2026 年 7 月 19 日
+          - 请您仔细阅读以下免责声明。使用 <strong>多多贝</strong>（以下简称“本产品”）即表示您已知悉并同意本声明的全部内容。
+      - heading: 一、不构成投资建议
+        paragraphs:
+          - >-
+            本产品仅为<strong>个人投资记账与资产分析工具</strong>，用于帮助您记录、整理和复盘自己的财务数据。本产品所展示的任何数据、图表、统计或分析结果，<strong>均不构成任何投资建议、要约或招揽</strong>。所有投资决策应由您基于自身判断独立做出，并自行承担相应风险。
+      - heading: 二、数据准确性
+        items:
+          - 本产品中的分析结论依赖于您录入数据的真实性与准确性。我们不对因数据录入错误、遗漏或延迟所导致的任何结果负责。
+          - 本产品不保证其功能在任何时间、任何环境下均无错误、无中断或完全符合您的预期。
+      - heading: 三、服务“现状”提供
+        paragraphs:
+          - 本产品按“<strong>现状</strong>”和“<strong>可用</strong>”的基础提供。在法律允许的最大范围内，我们不对以下情形承担责任：
+        items:
+          - 因不可抗力、黑客攻击、系统故障、网络中断等非我们主观原因导致的服务中断或数据损失；
+          - 因您自身原因（如设备丢失、密码泄露、未备份等）导致的数据丢失或泄露；
+          - 因使用或无法使用本产品而导致的任何间接、偶然或 consequential 损失。
+      - heading: 四、第三方链接与内容
+        paragraphs:
+          - 本产品可能包含指向第三方网站或内容的链接。这些链接仅为方便您而提供，我们不对第三方网站的内容、隐私实践或服务质量负责。
+      - heading: 五、投资风险提示
+        paragraphs:
+          - 投资有风险，入市需谨慎。历史收益不代表未来表现。您应充分了解相关风险，并在自身风险承受能力范围内做出决策。如您对市场或产品存在疑问，请咨询持牌专业人士。
+          - <strong>本声明自 2026 年 7 月 19 日起生效。</strong>
