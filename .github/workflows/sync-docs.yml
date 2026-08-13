@@ -1,0 +1,55 @@
+name: Sync docs content
+
+# 文档站 (fundmate/docs/*.md) 是唯一基准；本工作流把 Markdown 同步进主站 landing.content.yml。
+# 触发：每周一 03:17 UTC + 手动 workflow_dispatch。
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 主站 (duoduobei-web)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DOCS_SYNC_PAT }}
+          fetch-depth: 0
+
+      - name: Checkout 文档站 (fundmate) —— 公开仓，无需鉴权
+        uses: actions/checkout@v4
+        with:
+          repository: imoyao/fundmate
+          path: ../fundmate
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Sync docs -> yml
+        env:
+          DOCS_DIR: ${{ github.workspace }}/../fundmate/docs
+        run: node scripts/sync-docs-content.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "ClawBot"
+          git config user.email "clawbot@duoduobei.com"
+          if git diff --quiet landing.content.yml; then
+            echo "无变化，跳过提交"
+          else
+            git add landing.content.yml
+            git commit -m "docs: 同步文档站内容到 landing.content.yml [AI 自动提交]
+
+          AI-Committed-By: ClawBot"
+            git push
+          fi

@@ -160,6 +160,13 @@
   .btn:active { transform: translateY(1px); background: linear-gradient(135deg, var(--brand-deep), #C03A26); opacity: .92; }
   .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; background: var(--bg-soft); color: var(--ink-3); }
   .btn.ghost { background: var(--card); border: 1px solid var(--line); color: var(--ink); font-weight: 500; box-shadow: none; }
+  /* 底部操作按钮行：上一步（ghost）+ 下一题（主按钮）并排；仅一个按钮时居中收窄 */
+  .nav-row { display: flex; gap: 10px; margin-top: 8px; }
+  .nav-row .btn { flex: 1 1 0; min-width: 0; margin-top: 0; }
+  .nav-row .btn:only-child { flex: 0 1 240px; margin: 0 auto; }
+  /* Q0 选中后的脉冲反馈：提示即将自动进入下一题 */
+  @keyframes q0pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+  .opt.q0-lock { animation: q0pulse 1s var(--ease) infinite; }
 
   /* 进度：左上角半透明圆点，不占横条宽度 */
   .progress { position: fixed; top: 10px; left: 12px; z-index: 20; display: flex; gap: 6px; }
@@ -247,7 +254,10 @@
       <div id="opts"></div>
       <div id="aft" class="aft" style="display:none"></div>
     </div>
-    <button class="btn" id="nextBtn" disabled onclick="next()">下一题</button>
+    <div class="nav-row">
+      <button class="btn ghost" id="prevBtn" style="display:none" onclick="prev()">上一步</button>
+      <button class="btn" id="nextBtn" disabled onclick="next()">下一题</button>
+    </div>
   </section>
 
   <!-- 结果 + 留资 -->
@@ -1956,6 +1966,7 @@ let steps = [];        // 实际答题序列：[Q0-1, Q0-2, ...通用 5 题, 分
 let idx = 0;
 let answers = [];      // 与 steps 等长的作答索引（含 Q0，Q0 不计分）
 let profile = { tier: null, track: null };
+let autoTimer = null;  // Q0 自动推进定时器（点击选项后 1s 过渡进入下一屏）
 
 async function init() {
   // 优先 fetch 外部 quiz-data.json（便于后续热替换），失败则回退到内联副本
@@ -2004,12 +2015,19 @@ function pickOne(pool) {
 function drawGeneral() {
   drawn = quiz.slots
     .filter(s => s.type === "general")
-    .map(s => ({ slotId: s.id, scene: s.scene, q: pickOne(s.pool) }));
+    .map(s => ({ slotId: s.id, type: s.type, scene: s.scene, q: pickOne(s.pool) }));
 }
 function drawBranch() {
   const track = profile.track === "偏股" ? "偏股" : "纯债"; // 固收+/纯债共用纯债分支槽
   const slot = quiz.slots.find(s => s.type === "branch" && s.track === track);
-  if (slot) drawn.push({ slotId: slot.id, scene: slot.scene, q: pickOne(slot.pool) });
+  if (slot) {
+    // 回退到 Q0-2 改轨道时：先移除旧分支题再抽新的，避免序列里出现两个分支题
+    drawn = drawn.filter(d => d.type !== "branch");
+    drawn.push({ slotId: slot.id, type: slot.type, scene: slot.scene, q: pickOne(slot.pool) });
+  }
+}
+function hasBranchDrawn() {
+  return drawn.some(d => d.type === "branch");
 }
 
 /* 构建答题序列：Q0 两题 + 组卷抽出的计分题
@@ -2046,7 +2064,19 @@ function render() {
     const b = document.createElement("button");
     b.className = "opt" + (answers[idx] === i ? " sel" : "");
     b.innerHTML = `<span class="k">${o.key}</span>${o.label}`;
-    b.onclick = () => { answers[idx] = i; onAnswered(); render(); };
+    b.onclick = () => {
+      answers[idx] = i;
+      onAnswered();
+      render();
+      if (curStep().type === "q0") {
+        // 定位题：高亮脉冲 + 过渡文案，1s 后自动进入下一屏，无需点"下一步"
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("ctx").textContent = "已选择，即将进入下一题…";
+        const sel = document.querySelector("#opts button.opt.sel");
+        if (sel) sel.classList.add("q0-lock"); // render 已重建按钮，需重新取选中项
+        scheduleAutoNext();
+      }
+    };
     box.appendChild(b);
   });
   // 进度：左上角圆点 + 右上角文字
@@ -2057,9 +2087,21 @@ function render() {
     seg.className = i < idx ? "done" : (i === idx ? "cur" : "");
     p.appendChild(seg);
   }
-  document.getElementById("nextBtn").disabled = answers[idx] === null;
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
   const last = idx === steps.length - 1;
-  document.getElementById("nextBtn").textContent = last ? "查看结果" : (s.type === "q0" ? "下一步" : "下一题");
+  if (s.type === "q0") {
+    // 定位题：正向流点击后自动推进，不显示"下一步"；回退进来时显示"继续"作为出口
+    nextBtn.style.display = answers[idx] === null ? "none" : "";
+    nextBtn.textContent = "继续";
+    nextBtn.disabled = false;
+  } else {
+    nextBtn.style.display = "";
+    nextBtn.disabled = answers[idx] === null;
+    nextBtn.textContent = last ? "查看结果" : "下一题";
+  }
+  // 上一步：除第 1 屏（Q0-1）外都提供，定位题页也可回退修正
+  prevBtn.style.display = idx >= 1 ? "" : "none";
 
   // 双命运提示：选中选项后展示该题正反例（Q0 定位题无此内容）
   const aft = document.getElementById("aft");
@@ -2096,19 +2138,44 @@ function render() {
   }
 }
 
-/* Q0 回答后立即记录画像/轨道；Q0-2 答完补抽分支题并重建答题序列 */
+/* Q0 回答后立即记录画像/轨道；Q0-2 答完补抽分支题并重建答题序列。
+   回退到 Q0-2 改轨道时：替换重抽分支题，且 Q0-2 之后所有计分题答案作废
+   （否则答案数组仍指向旧题目组，计分会串）。 */
 function onAnswered() {
   if (curStep().id === "Q0-1" && answers[idx] !== null) {
     profile.tier = Q0["Q0-1"].options[answers[idx]].tier;
   }
   if (curStep().id === "Q0-2" && answers[idx] !== null) {
-    profile.track = Q0["Q0-2"].options[answers[idx]].track;
-    drawBranch();
-    rebuildSteps();
+    const track = Q0["Q0-2"].options[answers[idx]].track;
+    const changed = profile.track !== null && profile.track !== track;
+    profile.track = track;
+    if (changed) {
+      for (let i = 2; i < answers.length; i++) answers[i] = null; // 换轨道，后续答案作废
+      drawBranch();    // 移除旧分支题并重抽
+      rebuildSteps();
+    } else if (!hasBranchDrawn()) {
+      drawBranch();    // 首次确定轨道，补抽分支题
+      rebuildSteps();
+    }
   }
 }
 
+/* Q0 自动推进：点击选项后 1s 过渡进入下一屏（仅定位题使用） */
+function scheduleAutoNext() {
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => next(), 1000);
+}
+
+/* 回退：回到上一题。回退到 Q0-2 并改轨道时，onAnswered 会替换分支题并清空后续答案 */
+function prev() {
+  if (idx <= 0) return;
+  clearTimeout(autoTimer);
+  idx--;
+  render();
+}
+
 function next() {
+  clearTimeout(autoTimer);
   if (answers[idx] === null) return;
   if (idx < steps.length - 1) { idx++; render(); }
   else { compute(); show("result"); drawRadar(); renderReport(); }

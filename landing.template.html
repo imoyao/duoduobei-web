@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>多多贝 · 看见你的复利增长</title>
-  <meta name="description" content="一个让复利增长清晰可见的投资账本不荐股 · 不跟单 · 不自动抓取，数据主权始终在你手里。" />
+  <title>多多贝 · 看见你的复利曲线</title>
+  <meta name="description" content="一个让复利曲线清晰可见的投资账本不荐股 · 不跟单 · 不自动抓取，数据主权始终在你手里。" />
   <!-- SEO 基础：关键词（中文核心词，帮助搜索引擎理解主题） -->
   <meta name="keywords" content="多多贝,投资记账,复利,XIRR,持仓穿透,基金记账,理财账本,个人投资,家庭投资,不荐股" />
   <!-- Open Graph（微信/QQ/Telegram 等分享卡片） -->
-  <meta property="og:title" content="多多贝 · 看见你的复利增长" />
+  <meta property="og:title" content="多多贝 · 看见你的复利曲线" />
   <meta property="og:description" content="算清真实收益、穿透持仓、算准 XIRR，数据始终在你手里。不荐股 · 不跟单 · 不自动抓取。" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="zh_CN" />
@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://duoduobei.com/" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="多多贝 · 看见你的复利增长" />
+  <meta name="twitter:title" content="多多贝 · 看见你的复利曲线" />
   <meta name="twitter:description" content="算清真实收益、穿透持仓、算准 XIRR，数据始终在你手里。不荐股 · 不跟单 · 不自动抓取。" />
   <!-- canonical：规范链接，避免重复内容权重分散 -->
   <link rel="canonical" href="https://duoduobei.com/" />
@@ -271,6 +271,19 @@
       line-height: 1.12; letter-spacing: -0.02em; margin: 0 0 20px; max-width: 14ch;
     }
     .hero h1 .coral { color: var(--brand-700); }
+    /* 标题「曲线」二字：克制的弹跳回弹，呼应右侧鹦鹉螺的灵动，幅度小不抢戏 */
+    .coral-curve {
+      display: inline-block;
+      transform-origin: 50% 85%;
+      animation: curve-bob 3.4s var(--ease-patient) infinite;
+    }
+    @keyframes curve-bob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      15%      { transform: translateY(-6px) rotate(-2.5deg); }
+      32%      { transform: translateY(0) rotate(0deg); }
+      46%      { transform: translateY(-2.5px) rotate(1.2deg); }
+      60%      { transform: translateY(0) rotate(0deg); }
+    }
     .hero-sub {
       font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--text-primary);
       max-width: 600px; margin: 0 0 18px; line-height: 1.6;
@@ -441,14 +454,20 @@
 
     /* 页脚 */
     .footer { background: #3D352C; color: rgba(253,251,247,0.85); padding: 64px 0 32px; }
-    .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 48px; margin-bottom: 44px; align-items: start; }
     .footer-grid > div:last-child { justify-self: end; text-align: right; }
-    .footer-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--bg-page); margin-bottom: 12px; }
-    .footer-brand img { width: 30px; height: 30px; display: block; object-fit: contain; }
+    /* 品牌块：与中右栏 h5 同字号同字重，使三栏视觉重量一致 */
+    .footer-brand { display: flex; align-items: center; gap: 10px; color: var(--bg-page); margin-bottom: 4px; min-height: 26px; }
+    .footer-brand img { width: 22px; height: 22px; display: block; object-fit: contain; flex-shrink: 0; }
+    .footer-brand-tagline { font-size: 0.95rem; font-weight: 600; line-height: 1.2; margin: 0; }
+    /* 第二行标语：作为说明文弱化，与下方「品牌故事」等导航链接平齐 */
+    .footer-brand-sub { margin: 12px 0 6px; font-size: 0.82rem; font-weight: 400; line-height: 1.55; opacity: 0.75; max-width: 38ch; }
     .footer p { margin: 0; font-size: 0.92rem; line-height: 1.7; }
     .footer h5 { color: var(--bg-page); font-size: 0.95rem; margin: 0 0 14px; }
     .footer-links { display: flex; flex-direction: column; gap: 10px; font-size: 0.92rem; }
     .footer-links a:hover { color: var(--brand-700); }
+    /* logo 栏下方的导航链接：与 h5 之下保持同一节奏 */
+    .footer-brand-links { margin-top: 4px; }
     .footer-bottom { border-top: 1px solid rgba(253,251,247,0.12); padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: rgba(253,251,247,0.6); }
 
     /* ---------- 滚动揭示 ---------- */
@@ -486,6 +505,7 @@
     /* ---------- 无障碍：reduced-motion 强制降级 ---------- */
     @media (prefers-reduced-motion: reduce) {
       .nautilus, .nautilus .breath, .nautilus-hero, .nautilus-svg { animation: none !important; }
+      .coral-curve { animation: none !important; }
       .nh-septum, .nh-bubble { animation: none !important; }
       .eco-track { animation: none !important; }
       .eco-marquee { flex-wrap: wrap; justify-content: center; }
@@ -508,6 +528,7 @@
     width: 520px;
     height: 520px;
     flex-shrink: 0;
+    margin-right: -44px; /* 视觉右移，填补右侧留白、平衡画面 */
     animation: nau-sway 14s ease-in-out infinite alternate;
     transform-origin: center center;
     will-change: transform;
@@ -589,7 +610,7 @@
   .shell-icon-wrap { width: 140px; height: 140px; margin: 0 auto; }
 
   @media (max-width: 880px) {
-    .nautilus-hero { width: 380px; height: 380px; }
+    .nautilus-hero { width: 380px; height: 380px; margin-right: 0; }
   }
   @media (max-width: 720px) {
     .nautilus-hero { width: 280px; height: 280px; }
@@ -642,7 +663,7 @@
         "@id": "https://duoduobei.com/#website",
         "url": "https://duoduobei.com/",
         "name": "多多贝",
-        "description": "一个让复利增长清晰可见的投资账本。手动归集、穿透持仓、算准 XIRR，数据始终在你手里。",
+        "description": "一个让复利曲线清晰可见的投资账本。手动归集、穿透持仓、算准 XIRR，数据始终在你手里。",
         "inLanguage": "zh-CN"
       },
       {
@@ -901,7 +922,7 @@
   <!-- 导航 -->
   <nav class="nav">
     <div class="container nav-inner">
-      <a href="index.html" class="brand" aria-label="多多贝首页">
+      <a href="/" class="brand" aria-label="多多贝首页">
         <img src="site/logo.svg" alt="" aria-hidden="true">
         <span class="brand-name">{{brand}}<span class="brand-sub">{{brandSub}}</span><span class="brand-beta">{{brandBeta}}</span></span>
       </a>
@@ -920,7 +941,7 @@
     <div class="container hero-inner">
       <div class="hero-content">
         <span class="hero-tag">{{hero.tag}}</span>
-        <h1>{{hero.titleBefore}}<span class="coral">{{hero.titleCoral}}</span></h1>
+        <h1>{{hero.titleBefore}}<span class="coral">{{hero.titleCoral}}<span class="coral-curve">{{hero.titleCurve}}</span></span></h1>
         <p class="hero-sub">{{hero.sub}}</p>
         <div class="hero-caps" data-reveal>
           {{#each hero.caps}}<span class="hero-cap">{{.}}</span>{{/each}}
@@ -1427,8 +1448,14 @@
           <div>
             <div class="footer-brand">
               <img src="site/logo.svg" alt="" aria-hidden="true">
+              <p class="footer-brand-tagline">{{footer.taglineMain}}</p>
             </div>
-            <p>{{{footer.tagline}}}</p>
+            <p class="footer-brand-sub">{{footer.taglineSub}}</p>
+            <div class="footer-links footer-brand-links">
+              <a href="story.html">品牌故事</a>
+              <a href="about.html">关于我们</a>
+              <a href="{{links.personality}}">投资人格测试</a>
+            </div>
           </div>
           {{#each footer.columns}}
           <div>

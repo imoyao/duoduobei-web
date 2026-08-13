@@ -9,6 +9,13 @@ node_modules/
 /about.html
 /story.html
 /landing.html
+/privacy.html
+/terms.html
+/disclaimer.html
+/donate.html
+
+# 脚本目录的临时调试产物
+scripts/_*.cjs
 
 # 子项目临时调试产物（trading-personality-h5 的 diag/probe/shot/validate 脚本与截图）
 trading-personality-h5/_*
