@@ -298,12 +298,12 @@ footer:
   aboutLinks:
     - { label: 品牌故事, href: "story.html" }
     - { label: 关于我们, href: "about.html" }
-    - { label: 投资人格测试, href: "/personality/" }
+    - { label: 投资人格测试, href: "https://duoduobei.com/personality/" }
     - { label: GitHub, href: "https://github.com/imoyao" }
-    - { label: 意见反馈, href: "/docs/feedback/" }
-    - { label: 隐私政策, href: "/docs/privacy/" }
-    - { label: 免责声明, href: "/docs/disclaimer/" }
-    - { label: 赞赏作者, href: "/donate/" }
+    - { label: 意见反馈, href: "https://feedback.duoduobei.com" }
+    - { label: 隐私政策, href: "https://docs.duoduobei.com/privacy/" }
+    - { label: 免责声明, href: "https://docs.duoduobei.com/disclaimer/" }
+    - { label: 赞赏作者, href: "https://duoduobei.com/donate/" }
   bottom1: "© 2026 多多贝 duoduobei · 不荐股 · 不跟单 · 数据主权"
   bottom2: "<a href=\"https://github.com/imoyao\" style=\"color:inherit;text-decoration:underline;text-underline-offset:3px;\">GitHub</a>"
 
