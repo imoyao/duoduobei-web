@@ -1,5 +1,5 @@
 // 构建时注入：读取 landing.content.yml，替换 landing.template.html 中的令牌，
-// 输出纯静态 landing.html（无运行时依赖，SEO 友好）。
+// 输出纯静态 index.html（无运行时依赖，SEO 友好）。
 //
 // 令牌语法：
 //   {{ path.to.value }}            标量替换（点路径）
@@ -61,7 +61,7 @@ const SHELL_DECO = `<style>
 </div>`;
 
 const PAGES = {
-  landing: { tpl: 'landing.template.html', out: 'landing.html' },
+  landing: { tpl: 'landing.template.html', out: 'index.html' },
   about: { tpl: 'about.template.html', out: 'about.html' },
   story: { tpl: 'story.template.html', out: 'story.html' },
 };

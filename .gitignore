@@ -2,3 +2,9 @@ node_modules/
 *.log
 .tmp
 .DS_Store
+
+# 构建产物（由 build-landing.mjs 生成，CF Pages 部署时自动构建，不入库）
+index.html
+about.html
+story.html
+landing.html
