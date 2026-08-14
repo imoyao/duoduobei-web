@@ -78,7 +78,7 @@ function buildPage(key) {
   if (dataKey) {
     const sec = (data.legal && data.legal[dataKey]) || { title: '', sections: [] };
     data.legal = data.legal || {};
-    data.legal._current = { title: sec.title || '', html: renderSections(sec.sections || []) };
+    data.legal._current = { title: sec.title || '', slug: sec.slug || sec.title || '', html: renderSections(sec.sections || []) };
   }
   let html = fs.readFileSync(tplPath, 'utf8');
 
@@ -133,9 +133,16 @@ const scalarReSrc = /\{\{\s*([\w.]+)\s*\}\}/g;
 function renderSections(sections) {
   const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
   const part = (s) => {
-    // 段落内已含脚本端 inlineMd 生成的 <a>/<strong>/<del>，此处原样输出
+    // 段落内已含脚本端 inlineMd 生成的 <a>/<strong>/<del>，此处原样输出；
+    // 行首 markdown 标题（# / ## / ###）渲染为对应 h 标签，避免 "### 1.1" 以纯文本呈现
     const lines = String(s).split('\n').filter((l) => l.trim() !== '');
-    return lines.map((l) => `<p>${l}</p>`).join('');
+    return lines.map((l) => {
+      const t = l.trim();
+      if (t.startsWith('### ')) return `<h3>${t.slice(4)}</h3>`;
+      if (t.startsWith('## ')) return `<h2>${t.slice(3)}</h2>`;
+      if (t.startsWith('# ')) return `<h1>${t.slice(2)}</h1>`;
+      return `<p>${l}</p>`;
+    }).join('');
   };
   return sections
     .map((sec) => {

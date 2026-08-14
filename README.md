@@ -22,7 +22,7 @@ duoduobei-web/
 ├── scripts/
 │   └── sync-docs-content.mjs  # 把文档站 Markdown 同步进 landing.content.yml（文档站→主站）
 ├── logos/ logo-delivery/   # 品牌素材
-├── trading-personality-h5/ # 投资人格测试小游戏（子项目，独立静态页）
+├── personality/            # 投资人格测试小游戏（子项目，独立静态页）
 ├── site/                   # 构建辅助模块（geml 渲染等）
 ├── package.json
 └── .gitignore
@@ -125,4 +125,4 @@ links:
 
 ## 子项目
 
-- `trading-personality-h5/`：投资人格测试 H5 小游戏，独立静态页（`index.html` + `quiz-data.json`），不经模板渲染，链接在 `index.html` 内硬编码绝对域名。其临时调试产物（`_*` 前缀）已被 `.gitignore` 忽略。
+- `personality/`：投资人格测试 H5 小游戏，独立静态页（`index.html` + `quiz-data.json`），不经模板渲染，链接在 `index.html` 内硬编码绝对域名。其临时调试产物（`_*` 前缀）已被 `.gitignore` 忽略。

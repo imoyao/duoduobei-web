@@ -17,5 +17,5 @@ node_modules/
 # 脚本目录的临时调试产物
 scripts/_*.cjs
 
-# 子项目临时调试产物（trading-personality-h5 的 diag/probe/shot/validate 脚本与截图）
-trading-personality-h5/_*
+# 子项目临时调试产物（personality 的 diag/probe/shot/validate 脚本与截图）
+personality/_*
