@@ -240,7 +240,7 @@ honesty:
     - icon: circle-x
       cls: ''
       title: 不荐股不跟单
-      desc: 纯工具，不做任何投资建议，不做跟单社区。我们不告诉你买什么卖什么——那是你的决定，不是我们的。
+      desc: 纯工具，不做个性化投资建议，不做跟单社区。我们不告诉你买什么卖什么——那是你的决定，不是我们的。
     - icon: file-text
       cls: ''
       title: 算法透明
@@ -255,7 +255,7 @@ story:
   ctaLabel: 读品牌故事
   ctaHref: story.html
   sidebarTitle: 我们的立场
-  sidebarText: 我们不荐股、不跟单、不预测市场——只帮你把账算清楚。买还是卖？你自己判断。
+  sidebarText: 我们不荐股、不跟单、不替市场下结论——只把客观数据摆在你面前。买还是卖？你自己判断。
 pro:
   eyebrow: 专业复盘
   title: 大厂工具缺的那口气，我们补上
@@ -306,7 +306,7 @@ privacy:
       desc: 随时导出交易记录（CSV），数据始终在你手里。
 cta:
   title: 把账算明白，从今天开始
-  text: 不荐股、不跟单、不预测市场——只帮你算清真实收益。
+  text: 不荐股、不跟单、不替市场下结论——只把客观数据摆在你面前。
   btn: 免费开始
 footer:
   # 品牌标语拆成两行，与 logo 同栏右排（logo 顶端对齐第一行）
