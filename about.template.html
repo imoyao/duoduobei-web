@@ -120,14 +120,18 @@
     .about-nautilus .nh-outline { stroke: var(--brand-700); opacity: 0.5; }
     .about-nautilus .nh-core { fill: var(--brand-700); filter: drop-shadow(0 0 10px rgba(227,79,56,0.5)); }
 
-    .about-quote { background: var(--brand-700); color: #fff; padding: 0; }
+    /* 如何持续下去：分层着色，不再整体深红——各层独立可辨 */
+    .about-quote { background: transparent; color: var(--text-primary); padding: 0; }
     .about-quote .about-quote-inner { max-width: 760px; margin: 0 auto; padding: clamp(56px, 9vh, 100px) 24px; }
-    .about-quote .eyebrow { display: inline-block; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: rgba(255,255,255,0.72); margin-bottom: 18px; }
-    .about-quote p { font-size: 1.12rem; line-height: 1.95; color: #fff; margin: 0 0 18px; }
+    /* 第 1 层：小节标题（珊瑚红，独立醒目） */
+    .about-quote .about-quote-title { font-size: clamp(1.7rem, 3.4vw, 2.3rem); font-weight: 700; line-height: 1.25; margin: 0 0 20px; color: var(--brand-700); }
+    .about-quote p { font-size: 1.12rem; line-height: 1.95; color: var(--text-primary); margin: 0 0 18px; }
     .about-quote .about-links { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 22px; }
-    .about-quote .about-links a { color: #fff; text-decoration: underline; text-underline-offset: 3px; font-size: 0.95rem; }
-    .about-quote .about-tip { background: rgba(255,255,255,0.1); border-left: 3px solid #fff; padding: 16px 18px; border-radius: 8px; font-size: 1.05rem; line-height: 1.8; margin: 0 0 22px; }
-    .about-quote blockquote { margin: 0; padding-left: 18px; border-left: 3px solid rgba(255,255,255,0.5); font-style: italic; font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.92); }
+    .about-quote .about-links a { color: var(--brand-700); text-decoration: underline; text-underline-offset: 3px; font-size: 0.95rem; }
+    /* 第 2 层：付费支持提示 —— 浅珊瑚底卡片 */
+    .about-quote .about-tip { background: rgba(242,163,142,0.12); border-left: 3px solid var(--brand-700); padding: 16px 18px; border-radius: 8px; font-size: 1.05rem; line-height: 1.8; margin: 0 0 22px; color: var(--text-primary); }
+    /* 第 3 层：引用 —— 独立引用块（柔灰底 + 珊瑚左边框 + 斜体） */
+    .about-quote blockquote { margin: 0; padding: 18px 20px; background: var(--bg-soft); border-left: 4px solid var(--brand-700); border-radius: 8px; font-style: italic; font-size: 1.08rem; line-height: 1.85; color: var(--text-primary); }
 
     .about-cta { background: var(--bg-soft); padding: 0; }
     .about-cta .container { padding-top: clamp(64px, 10vh, 104px); padding-bottom: clamp(64px, 10vh, 104px); }
@@ -158,7 +162,7 @@
     <!-- 开场 -->
     <section class="about-hero" data-reveal>
       <div class="container">
-        <span class="eyebrow">我们的故事</span>
+        <span class="eyebrow">关于我们</span>
         <h1>{{about.heroTitle}}</h1>
         <p class="sub">{{about.heroSub}}</p>
       </div>
@@ -214,10 +218,10 @@
       </div>
     </section>
 
-    <!-- 如何持续下去（珊瑚红实心块） -->
+    <!-- 如何持续下去（分层着色：标题/提示/引用 各自独立样式） -->
     <section class="about-quote" data-reveal>
       <div class="about-quote-inner">
-        <span class="eyebrow">{{about.blocks.3.title}}</span>
+        <h2 class="about-quote-title">{{about.blocks.3.title}}</h2>
         {{#each about.blocks.3.paragraphs}}<p>{{{.}}}</p>{{/each}}
         <div class="about-links">
           {{#each about.blocks.3.links}}<a href="{{href}}" target="_blank" rel="noopener">{{label}}</a>{{/each}}

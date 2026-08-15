@@ -234,6 +234,32 @@ html = html.replace(/<!--ICON:([\w-]+)-->/g, (_m, name) => ICONS[name] || '');
 // 3.5) 全局贝壳装饰注入
 html = html.replace(/<!--SHELL_DECO-->/g, SHELL_DECO);
 
+// 3.6) 外链强制新标签页打开（中央规则，覆盖全部页面，无需逐模板维护）
+//      - 仅作用于第三方域名（http/https 且 host 非 duoduobei.com）；
+//      - 站内导航（/、/#锚点、相对路径、本站绝对链接）保持同标签，符合常规浏览习惯；
+//      - 缺失则补 target="_blank" 与 rel="noopener noreferrer"（合并已有 rel）。
+const SELF_HOST = 'duoduobei.com';
+html = html.replace(/<a\b([^>]*)>/g, (full, attrs) => {
+  const hrefM = attrs.match(/\bhref\s*=\s*"([^"]*)"/);
+  if (!hrefM) return full;
+  const href = hrefM[1];
+  if (!/^https?:\/\//i.test(href)) return full; // 非绝对外链（锚点/站内相对）不处理
+  try {
+    const host = new URL(href).hostname.replace(/^www\./, '');
+    if (host.endsWith(SELF_HOST)) return full; // 本站链接，保持同标签
+  } catch (e) { return full; }
+  let a = attrs;
+  if (!/\btarget\s*=/.test(a)) a += ' target="_blank"';
+  const need = ['noopener', 'noreferrer'];
+  const relM = a.match(/\brel\s*=\s*"([^"]*)"/);
+  let rel = relM ? relM[1].split(/\s+/).filter(Boolean) : [];
+  rel = [...new Set([...rel, ...need])];
+  a = relM
+    ? a.replace(/\brel\s*=\s*"[^"]*"/, 'rel="' + rel.join(' ') + '"')
+    : a + ' rel="' + rel.join(' ') + '"';
+  return '<a' + a + '>';
+});
+
 // 4) Marquee 无缝 + 满宽 + 去重打乱：
 //    - 收集所有 eco-item 文本 → Set 去重 → Fisher-Yates 随机打乱；
 //    - 偶数份保证 translateX(-50%) 两半二进制一致 → 无缝循环；

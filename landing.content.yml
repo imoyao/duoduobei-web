@@ -335,6 +335,8 @@ footer:
         - label: 免责声明
           href: '{{links.docsDisclaimer}}'
 about:
+  heroTitle: 关于多多贝
+  heroSub: 我们为什么做这件事，以及，如何让它持续下去。
   blocks:
     - id: what
       kind: plain
@@ -377,8 +379,9 @@ about:
       paragraphs:
         - 谈开源，也绕不开怎么让一件事持久。多多贝会坚持<strong>基础记账功能（含账单导出）长期免费</strong>。但一款软件要持续维护，只靠热爱是不够的——
         - 所以我们选择了一条实在的路：
-        - <a href="https://www.zhihu.com/question/22084816" target="_blank" rel="noopener">为什么说「免费的其实是最贵的」？ - 知乎</a>
       links:
+        - label: 为什么说「免费的其实是最贵的」？ - 知乎
+          href: https://www.zhihu.com/question/22084816
         - label: 财帮子的所有者还打算继续办下去么？ - 知乎
           href: https://www.zhihu.com/question/29603361
         - label: 网易有钱 App 下线公告
