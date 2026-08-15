@@ -200,10 +200,24 @@
 
   .hook { text-align: center; padding: 22px 6px; }
   .hook h2 { font-size: 20px; }
-  .hook p { color: var(--ink-2); font-size: 14px; }
-  .hook .cta-row { display: flex; gap: 10px; margin: 14px 0 0; }
-  .hook .cta-row .btn { width: auto; flex: 1 1 0; min-width: 0; margin-top: 0; }
-  .hook .btn.block { max-width: 340px; margin: 10px auto 0; }
+  .hook p { color: var(--ink-2); font-size: 14px; margin-bottom: 4px; }
+
+  /* 主转化按钮：与标题"用真实交易验证"对齐，作为整页唯一高权重动作 */
+  .hook-primary { font-size: 16px; padding: 16px; margin-top: 14px; box-shadow: 0 6px 18px rgba(227,79,56,.22); }
+
+  /* 次级入口：两条平行试用入口，权重一致、并排等宽 */
+  .hook .cta-row { display: flex; gap: 10px; margin: 10px 0 0; }
+  .hook .cta-row .btn { width: auto; flex: 1 1 0; min-width: 0; margin-top: 0; font-size: 14.5px; padding: 13px 8px; }
+
+  /* 辅助渠道与工具动作：合并为同一条 footer，用虚线分隔 */
+  .hook-meta {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin-top: 18px; padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    color: var(--ink-3); font-size: 12.5px;
+  }
+  .hook-utility { color: var(--ink-3); text-decoration: none; cursor: pointer; }
+  .hook-utility:hover { color: var(--brand-deep); }
 
   /* 微信二维码占位：替换为真实二维码后删除占位说明 */
   .qr {
@@ -212,6 +226,8 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.5;
   }
+  /* hook 内的迷你尺寸：让位给主转化与二级 CTA */
+  .qr-mini { width: 72px; height: 72px; margin: 0; border-radius: 8px; font-size: 10.5px; line-height: 1.4; }
 
   input[type=text] {
     width: 100%; padding: 13px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--line);
@@ -289,13 +305,21 @@
     <div class="hook">
       <h2>把这份人格，用真实交易验证一下</h2>
       <p>人格测试只是开始。导入你的真实账户，多多贝会用同一套五维引擎，对照你的实测操作，告诉你哪一块认知偏差最贵。</p>
+
+      <!-- 主转化：与标题"用真实交易验证"严格对齐 -->
+      <a class="btn hook-primary" href="https://app.duoduobei.com" target="_blank" rel="noopener">注册多多贝 · 导入账户跑对比</a>
+
+      <!-- 次级入口：两条平等权重的低门槛试用 -->
       <div class="cta-row">
-        <a class="btn" href="https://app.duoduobei.com/explore" target="_blank" rel="noopener">免费探市</a>
+        <a class="btn ghost" href="https://app.duoduobei.com/explore" target="_blank" rel="noopener">免费探市</a>
         <a class="btn ghost" href="https://app.duoduobei.com/temperature" target="_blank" rel="noopener">看市场温度计</a>
       </div>
-      <a class="btn block" href="https://app.duoduobei.com" target="_blank" rel="noopener">注册多多贝 · 导入账户跑对比</a>
-      <div class="qr">微信公众号<br/>（关注获取更新）</div>
-      <button class="btn ghost" onclick="location.reload()" style="margin-top:14px">重新测一次</button>
+
+      <!-- 辅助渠道 + 工具动作：用虚线分隔的 footer，不再打断主流程 -->
+      <div class="hook-meta">
+        <div class="qr qr-mini">微信公众号<br/>（关注获取更新）</div>
+        <a class="hook-utility" href="javascript:void(0)" onclick="location.reload()">重新测一次</a>
+      </div>
     </div>
   </section>
 
