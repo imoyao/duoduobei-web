@@ -40,7 +40,23 @@
     .nav-links { display: flex; align-items: center; gap: 30px; font-size: 0.95rem; color: var(--text-secondary); }
     .nav-links a:hover { color: var(--brand-700); }
     .nav-links a.active { color: var(--brand-700); font-weight: 600; }
+
+    /* 导航「更多」下拉 */
+    .nav-more { position: relative; }
+    .nav-more-toggle { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+    .nav-more-toggle:hover { color: var(--brand-700); }
+    .nav-caret { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s var(--ease-patient); }
+    .nav-more[data-open] .nav-caret { transform: rotate(180deg); }
+    .nav-more-menu { position: absolute; top: calc(100% + 12px); right: 0; min-width: 160px; margin: 0; padding: 8px; list-style: none; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 0.18s var(--ease-patient), transform 0.18s var(--ease-patient), visibility 0.18s; z-index: 50; }
+    .nav-more[data-open] .nav-more-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .nav-more-menu li { margin: 0; }
+    .nav-more-menu a { display: block; padding: 10px 14px; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.95rem; font-weight: 500; }
+    .nav-more-menu a:hover { background: rgba(227,79,56,0.08); color: var(--brand-700); }
+    .nav-more-menu a.active { background: rgba(227,79,56,0.08); color: var(--brand-700); font-weight: 600; }
+    .nav-more[data-has-active] .nav-more-toggle { color: var(--brand-700); font-weight: 600; }
     .nav-cta { display: flex; align-items: center; gap: 14px; }
+    /* 汉堡按钮：桌面隐藏，仅移动端出现 */
+    .nav-toggle { display: none; }
 
     .footer { background: #3D352C; color: rgba(253,251,247,0.85); padding: 64px 0 32px; }
     .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 48px; margin-bottom: 44px; align-items: start; }
@@ -61,8 +77,63 @@
     [data-reveal].in-view { opacity: 1; transform: none; }
 
     @media (max-width: 880px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 720px) { .nav-links { display: none; } .footer-grid { grid-template-columns: 1fr; gap: 32px; } .footer-grid > div:last-child { text-align: left; } }
-    @media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+    @media (max-width: 720px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-grid > div:last-child { justify-self: start; text-align: left; }
+      /* 移动端导航：汉堡按钮 + 抽屉 */
+      .brand-sub, .brand-beta { display: none; }
+      .nav-inner { height: auto; min-height: 60px; padding-top: 8px; padding-bottom: 8px; flex-wrap: wrap; }
+      .nav-toggle {
+        display: inline-flex; align-items: center; justify-content: center;
+        order: 2; width: 42px; height: 42px; margin-left: auto;
+        background: transparent; border: 1px solid var(--border-default);
+        border-radius: 10px; cursor: pointer; padding: 0;
+      }
+      .nav-toggle:hover, .nav-toggle:focus-visible { background: var(--bg-soft); border-color: var(--border-default); }
+      .nav-toggle-bar, .nav-toggle-bar::before, .nav-toggle-bar::after {
+        content: ''; display: block; width: 18px; height: 2px;
+        background: var(--text-primary); border-radius: 2px;
+        transition: transform .25s var(--ease-patient), opacity .2s;
+      }
+      .nav-toggle-bar { position: relative; }
+      .nav-toggle-bar::before { position: absolute; left: 0; top: -6px; }
+      .nav-toggle-bar::after { position: absolute; left: 0; top: 6px; }
+      .nav-inner[data-open] .nav-toggle-bar { background: transparent; }
+      .nav-inner[data-open] .nav-toggle-bar::before { transform: translateY(6px) rotate(45deg); }
+      .nav-inner[data-open] .nav-toggle-bar::after { transform: translateY(-6px) rotate(-45deg); }
+      /* 移动端隐藏导航栏内的「免费开始」按钮：首页已有该入口，避免与标题/汉堡挤在一起；桌面端保留 */
+      .nav-cta { display: none; }
+
+      .nav-links {
+        display: none;
+        order: 99; flex: 0 0 100%; width: 100%; margin-left: 0;
+        flex-direction: column; align-items: stretch; gap: 0;
+        padding: 6px 0 10px;
+        border-top: 1px solid var(--border-light);
+        margin-top: 6px;
+        max-height: calc(100vh - 70px); overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-inner[data-open] .nav-links { display: flex; }
+      .nav-links a {
+        flex-shrink: 0; white-space: normal;
+        padding: 13px 4px; text-align: left;
+        border-bottom: 1px solid var(--border-light);
+      }
+      .nav-links a:last-of-type { border-bottom: 0; }
+      /* 移动端「更多」平铺为静态子列表，不再用绝对定位下拉（避免被裁切） */
+      .nav-more { width: 100%; flex-shrink: 0; }
+      .nav-more-toggle { display: none; }
+      .nav-more-menu {
+        position: static; opacity: 1; visibility: visible; transform: none;
+        box-shadow: none; border: 0; background: none; padding: 0; margin: 0; list-style: none;
+      }
+      .nav-more-menu li { border-bottom: 1px solid var(--border-light); }
+      .nav-more-menu li:last-child { border-bottom: 0; }
+      .nav-more-menu a { padding-left: 16px; font-size: .92em; color: var(--text-secondary); border-bottom: 0; }
+      .nav-more-menu a:last-of-type { border-bottom: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; transition: none; } .nav-more-menu { transition: none !important; } html { scroll-behavior: auto; } }
 
     /* ===== legal 专属（线性长文） ===== */
     .legal-hero { padding: clamp(80px, 13vh, 140px) 0 clamp(28px, 5vh, 48px); text-align: center; }
@@ -89,16 +160,21 @@
         <img src="site/logo.svg" alt="" aria-hidden="true" />
         <span class="brand-name">{{brand}}<span class="brand-sub">{{brandSub}}</span><span class="brand-beta">{{brandBeta}}</span></span>
       </a>
-      <div class="nav-links">
-        <a href="/#features">核心能力</a>
-        <a href="/#ecosystem">支持导入</a>
-        <a href="/#scenarios">适用场景</a>
-        <a href="/#compare">为什么不同</a>
-        <a href="/#honesty">诚实承诺</a>
-        <a href="story.html">品牌故事</a>
-        <a href="about.html">关于我们</a>
+      <div class="nav-links" id="primary-nav" data-active-id="{{activeId}}">
+        {{#each nav.primary}}<a href="{{url}}" data-id="{{id}}">{{label}}</a>{{/each}}
+        <div class="nav-more" data-nav-more>
+          <button type="button" class="nav-more-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="nav-more-menu">
+            更多 <svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <ul id="nav-more-menu" class="nav-more-menu" role="menu">
+            {{#each nav.more}}<li role="none"><a role="menuitem" href="{{url}}" data-id="{{id}}">{{label}}</a></li>{{/each}}
+          </ul>
+        </div>
       </div>
       <a class="btn btn-primary nav-cta" href="{{links.app}}">{{nav.cta}}</a>
+        <button type="button" class="nav-toggle" aria-label="展开导航菜单" aria-expanded="false" aria-controls="primary-nav">
+          <span class="nav-toggle-bar"></span>
+        </button>
     </div>
   </nav>
 
@@ -156,6 +232,55 @@
       }
     }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
     document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+
+    // 导航「更多」下拉：点击切换，外部点击 / Esc / 选中链接后关闭
+    (function navMore() {
+      const root = document.querySelector('[data-nav-more]');
+      if (!root) return;
+      const btn = root.querySelector('.nav-more-toggle');
+      const menu = root.querySelector('.nav-more-menu');
+      const setOpen = (open) => {
+        if (open) root.setAttribute('data-open', ''); else root.removeAttribute('data-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      };
+      btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!root.hasAttribute('data-open')); });
+      menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('click', (e) => { if (!root.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    })();
+
+    // 移动端汉堡菜单：切换抽屉；点击链接 / 外部点击 / Esc / 回到桌面尺寸时关闭
+    (function navToggle() {
+      const inner = document.querySelector('.nav-inner');
+      const btn = document.querySelector('.nav-toggle');
+      if (!inner || !btn) return;
+      const setOpen = (open) => {
+        if (open) inner.setAttribute('data-open', ''); else inner.removeAttribute('data-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      };
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOpen(!inner.hasAttribute('data-open'));
+      });
+      inner.querySelectorAll('.nav-links a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('click', (e) => { if (!inner.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+      window.addEventListener('resize', () => { if (window.innerWidth > 720) setOpen(false); });
+    })();
+
+    // 高亮当前页对应的导航项
+    (function navActive() {
+      const nav = document.querySelector('.nav-links[data-active-id]');
+      if (!nav) return;
+      const id = nav.getAttribute('data-active-id');
+      if (!id) return;
+      const a = nav.querySelector('a[data-id="' + id + '"]');
+      if (a) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
+      if (a && a.closest('.nav-more-menu')) {
+        const more = nav.querySelector('[data-nav-more]');
+        if (more) more.setAttribute('data-has-active', '');
+      }
+    })();
   </script>
 </body>
 </html>

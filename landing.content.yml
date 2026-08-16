@@ -18,24 +18,80 @@ site:
   copyright1: © 2026 多多贝 duoduobei · 不荐股 · 不跟单 · 数据主权
   copyright2: '<a href="https://github.com/imoyao" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">GitHub</a>'
 nav:
-  links:
+  # 主项：首屏可见，控制在 5 个以内避免换行
+  primary:
     - label: 核心能力
-      href: '#features'
+      id: features
+    - label: 工作流程
+      id: workflow
     - label: 支持导入
-      href: '#ecosystem'
-    - label: 适用场景
-      href: '#scenarios'
+      id: ecosystem
     - label: 免费探市
-      href: '#explore'
-    - label: 为什么不同
-      href: '#compare'
-    - label: 诚实承诺
-      href: '#honesty'
-    - label: 品牌故事
-      href: story.html
+      id: explore
     - label: 关于我们
+      id: about
       href: about.html
+  # 次项：折叠进「更多」下拉，保持可达且不挤占导航
+  more:
+    - label: 适用场景
+      id: scenarios
+    - label: 为什么不同
+      id: compare
+    - label: 诚实承诺
+      id: honesty
+    - label: 品牌故事
+      id: story
+      href: story.html
   cta: 免费开始
+workflow:
+  eyebrow: 工作流程
+  title: 只需三步，把糊涂账变成看得懂的复利曲线
+  lead: 你只管上传，剩下的交给我们——解析数据、穿透持仓、拆解行为，最后把结论摆在你面前。
+  steps:
+    - num: '1'
+      tone: coral
+      icon: upload-cloud
+      title: 上传你的交易数据
+      desc: 导入 CSV / Excel 交割单，或手动录入流水与持仓。免券商密码，数据主权始终在你手里。
+      points:
+        - 交易记录 · 流水
+        - 持仓明细
+        - CSV · Excel 交割单
+    - num: '2'
+      tone: blue
+      icon: layers
+      title: 智能解析，结构化输出
+      desc: 自动识别买卖、分红、拆股等交易行为，把杂乱流水单整理成标准、可追溯的资产快照。
+      points:
+        - 智能识别字段
+        - 拆分分红费率
+        - 标准化资产快照
+    - num: '3'
+      tone: teal
+      icon: monitor
+      title: 深度分析，优化持仓
+      desc: 穿透持仓结构，拆解交易行为，给出可落地的优化方向——不止是一堆看起来炫目的图表。
+      points:
+        - 持仓穿透分析
+        - 交易行为拆解
+        - 优化方向建议
+  result:
+    eyebrow: 发掘数据，看见价值
+    title: 你拿到的是结论，不是图表
+    lead: 穿透、拆解、归因之后，留给你的是能直接指导下一步的清晰判断
+    values:
+      - icon: trending-up
+        k: 真实年化
+        v: XIRR 精确到日，先搞清"到底赚没赚"
+      - icon: layers
+        k: 持仓穿透
+        v: 单只占比、波动是否超线，一眼看清
+      - icon: activity
+        k: 行为拆解
+        v: 追涨杀跌、成本摩擦，交易习惯摊开看
+      - icon: shield-check
+        k: 持仓优化
+        v: 该加仓还是离场，看数据而不是靠直觉
 hero:
   tag: 投资账本 · 数据主权
   titleBefore: 看见你的
@@ -305,7 +361,7 @@ privacy:
       title: 支持一键导出
       desc: 随时导出交易记录（CSV），数据始终在你手里。
 cta:
-  title: 把账算明白，从今天开始
+  title: 把投资账算明白，从今天开始
   text: 不荐股、不跟单、不替市场下结论——只把客观数据摆在你面前。
   btn: 免费开始
 footer:
