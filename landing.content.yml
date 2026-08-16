@@ -21,6 +21,8 @@ nav:
   links:
     - label: 核心能力
       href: '#features'
+    - label: 工作流程
+      href: '#workflow'
     - label: 支持导入
       href: '#ecosystem'
     - label: 适用场景
@@ -36,6 +38,55 @@ nav:
     - label: 关于我们
       href: about.html
   cta: 免费开始
+workflow:
+  eyebrow: 工作流程
+  title: 三步，把糊涂账变成看得懂的复利
+  lead: 你只需把交易数据交给多多贝，解析、分析、归因这些麻烦事，我们替你算清楚。
+  steps:
+    - num: '01'
+      tone: coral
+      icon: upload
+      title: 上传你的交易数据
+      desc: 导入 CSV / Excel 交割单，或手动录入交易流水与持仓明细。免券商密码，数据主权始终在你手里。
+      points:
+        - 交易记录 · 流水
+        - 持仓明细
+        - CSV / Excel 交割单
+    - num: '02'
+      tone: blue
+      icon: file-text
+      title: 智能解析数据结构化
+      desc: 自动识别买卖、分红、费率等字段，把杂乱的流水整理成标准、可追溯的资产快照。
+      points:
+        - 字段智能识别
+        - 分红 / 费率拆解
+        - 标准化资产快照
+    - num: '03'
+      tone: teal
+      icon: chart
+      title: 深度分析 + 方向优化
+      desc: 穿透持仓结构，拆解交易行为，给出可落地的优化方向——而不是一堆看不懂的图表。
+      points:
+        - 持仓穿透分析
+        - 交易行为拆解
+        - 优化方向建议
+  result:
+    eyebrow: 然后，看见价值
+    title: 分析完，你会得到什么
+    lead: 不是一堆图表，而是能指导下一步行动的清晰结论。
+    values:
+      - icon: trending-up
+        k: 真实年化
+        v: XIRR 精确到日，告别"赚了还是亏了"的糊涂账
+      - icon: layers
+        k: 持仓穿透
+        v: 单只标的占比、波动是否超线，一眼看清
+      - icon: activity
+        k: 行为拆解
+        v: 追涨杀跌、成本摊薄，把交易习惯摊开看
+      - icon: shield-check
+        k: 方向优化
+        v: 该加仓还是离场，用数据而不是直觉
 hero:
   tag: 投资账本 · 数据主权
   titleBefore: 看见你的

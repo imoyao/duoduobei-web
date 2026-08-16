@@ -651,6 +651,89 @@
   @media (max-width: 720px) {
     .shell-deco { display: none; } /* 移动端隐藏散落贝壳 */
   }
+
+  /* ---------- 工作流程（动态流程图） ---------- */
+  .workflow { background: var(--bg-page); }
+  .flow { position: relative; max-width: 1000px; margin: 0 auto; }
+  .flow-line {
+    position: absolute; top: 36px; left: 16.67%; width: 66.66%; height: 4px;
+    overflow: visible; z-index: 0; transform: translateY(-50%);
+  }
+  .flow-line-base { stroke: var(--border-light); stroke-width: 2; }
+  .flow-line-flow {
+    stroke: var(--brand-700); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 64 936;
+    filter: drop-shadow(0 0 6px rgba(227,79,56,0.55));
+    animation: flow-travel 3.4s linear infinite;
+  }
+  @keyframes flow-travel { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+  .flow-steps {
+    position: relative; z-index: 1; list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .flow-step { text-align: center; padding: 0 8px; }
+  .flow-node {
+    width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 20px;
+    display: grid; place-items: center; position: relative;
+    background: var(--bg-card); border: 2px solid var(--border-light);
+    box-shadow: var(--shadow-md);
+    transition: transform .3s var(--ease-patient), border-color .3s, box-shadow .3s;
+  }
+  .flow-node svg { width: 30px; height: 30px; }
+  .flow-step:hover .flow-node { transform: translateY(-4px) scale(1.04); }
+  .flow-node.coral { border-color: var(--brand-400); color: var(--brand-700); }
+  .flow-node.blue  { border-color: rgba(204,61,39,0.4); color: #CC3D27; }
+  .flow-node.teal  { border-color: rgba(47,126,92,0.4); color: #2F7E5C; }
+  .flow-node-num {
+    position: absolute; top: -8px; right: -8px;
+    font-family: var(--font-num); font-size: .8rem; font-weight: 700;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center; color: #fff;
+    background: var(--brand-700); box-shadow: var(--shadow-coral);
+  }
+  .flow-step-title { font-size: 1.18rem; font-weight: 700; margin: 0 0 10px; color: var(--text-primary); }
+  .flow-step-desc { font-size: .96rem; line-height: 1.7; margin: 0 0 16px; color: var(--text-secondary); }
+  .flow-step-points { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .flow-step-points li {
+    font-size: .82rem; color: var(--text-secondary);
+    background: var(--bg-soft); border: 1px solid var(--border-light);
+    padding: 5px 12px; border-radius: 999px;
+  }
+  .flow-result {
+    margin-top: 56px; position: relative; overflow: hidden;
+    background: linear-gradient(155deg, var(--brand-700), #C0352A);
+    color: #fff; border-radius: calc(var(--radius-lg) + 4px);
+    padding: 40px clamp(24px, 5vw, 56px); box-shadow: var(--shadow-coral);
+  }
+  .flow-result::after {
+    content: ''; position: absolute; right: -60px; top: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
+  }
+  .flow-result-head { text-align: center; margin-bottom: 28px; }
+  .flow-result-head .section-eyebrow { color: rgba(255,255,255,0.85); }
+  .flow-result-head h3 { font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 700; margin: 0 0 8px; color: #fff; }
+  .flow-result-head p { margin: 0; color: rgba(255,255,255,0.88); font-size: 1rem; }
+  .flow-values { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .flow-value { display: flex; gap: 12px; align-items: flex-start; }
+  .flow-value-icon {
+    flex: none; width: 44px; height: 44px; border-radius: 12px;
+    display: grid; place-items: center; background: rgba(255,255,255,0.16); color: #fff;
+  }
+  .flow-value-icon svg { width: 24px; height: 24px; }
+  .flow-value strong { display: block; font-size: 1.02rem; font-weight: 700; margin-bottom: 4px; }
+  .flow-value span { font-size: .88rem; line-height: 1.6; color: rgba(255,255,255,0.88); }
+  @media (max-width: 880px) {
+    .flow-steps { grid-template-columns: 1fr; gap: 36px; }
+    .flow-line { display: none; }
+    .flow-values { grid-template-columns: 1fr 1fr; gap: 18px; }
+  }
+  @media (max-width: 560px) {
+    .flow-values { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flow-line-flow { animation: none !important; }
+  }
   </style>
   <!-- ===== 结构化数据（JSON-LD）：帮助搜索引擎理解站点与品牌 ===== -->
   <!-- TODO(seo): 部署域名确认后，将 duoduobei.com 替换为真实地址 -->
@@ -1025,6 +1108,55 @@
       </div>
     </div>
   </header>
+
+  <!-- 工作流程：动态流程图 -->
+  <section class="section workflow" id="workflow">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="section-eyebrow">{{workflow.eyebrow}}</span>
+        <h2 class="section-title">{{workflow.title}}</h2>
+        <p class="section-lead">{{workflow.lead}}</p>
+      </div>
+
+      <div class="flow" data-reveal>
+        <svg class="flow-line" viewBox="0 0 1000 4" preserveAspectRatio="none" aria-hidden="true">
+          <line class="flow-line-base" x1="0" y1="2" x2="1000" y2="2" />
+          <line class="flow-line-flow" x1="0" y1="2" x2="1000" y2="2" />
+        </svg>
+        <ol class="flow-steps">
+          {{#each workflow.steps}}
+          <li class="flow-step">
+            <div class="flow-node icon-{{tone}}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><!--ICON:{{icon}}--></svg>
+              <span class="flow-node-num">{{num}}</span>
+            </div>
+            <h3 class="flow-step-title">{{title}}</h3>
+            <p class="flow-step-desc">{{desc}}</p>
+            <ul class="flow-step-points">
+              {{#each points}}<li>{{.}}</li>{{/each}}
+            </ul>
+          </li>
+          {{/each}}
+        </ol>
+      </div>
+
+      <div class="flow-result" data-reveal>
+        <div class="flow-result-head">
+          <span class="section-eyebrow">{{workflow.result.eyebrow}}</span>
+          <h3>{{workflow.result.title}}</h3>
+          <p>{{workflow.result.lead}}</p>
+        </div>
+        <ul class="flow-values">
+          {{#each workflow.result.values}}
+          <li class="flow-value">
+            <span class="flow-value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><!--ICON:{{icon}}--></svg></span>
+            <div><strong>{{k}}</strong><span>{{v}}</span></div>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </section>
 
   <!-- 功能：六大核心能力（仿 qwenwork 风格） -->
   <section class="features" id="features">
