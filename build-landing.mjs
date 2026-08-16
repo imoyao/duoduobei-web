@@ -17,6 +17,9 @@ const root = process.cwd();
 const ymlPath = path.join(root, 'landing.content.yml');
 const data = yaml.load(fs.readFileSync(ymlPath, 'utf8'));
 
+// 跨页导航基址：landing 同页裸锚点(#id)，子页跨页(/#id)。buildPage 中按模板设定。
+let navBase = '';
+
 // 多页构建：landing / about 共用同一份 YML 文案源，各自独立模板
 // ===== 全局贝壳装饰片段（<!--SHELL_DECO--> 注入） =====
 // 线条手绘风格贝壳/海星/气泡，用于点缀各页面空白区域
@@ -74,6 +77,7 @@ function buildPage(key) {
   const { tpl: tplFile, out: outFile, key: dataKey } = PAGES[key];
   const tplPath = path.join(root, tplFile);
   const outPath = path.join(root, outFile);
+  navBase = tplFile === 'landing.template.html' ? '' : '/';
   // legal 类页面：把当前 key 的 sections 渲染成 html 片段挂到 legal._current，供共用模板 {{{ }}} 输出
   if (dataKey) {
     const sec = (data.legal && data.legal[dataKey]) || { title: '', sections: [] };
@@ -88,6 +92,7 @@ const ICONS = {
   'trending-up': '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
   list: '<rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>',
   upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  'upload-cloud': '<path d="M16 16l-4-4-4 4"/><polyline points="8 12 12 8 16 12"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/>',
   info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
   shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
   'shield-check': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="12 8 12 12 15 14"/>',
@@ -169,6 +174,12 @@ function renderSections(sections) {
 // 内层块在外层展开后随递归获得正确的 item 上下文。
 function render(tpl, ctx) {
   ctx = ctx || data;
+  // 跨页导航：landing 同页用裸锚点 #id，子页跨页用 /#id；独立页用 href
+  const eachItem = (item) => {
+    if (item && item.href) return { ...item, url: item.href };
+    if (item && item.id) return { ...item, url: navBase + '#' + item.id };
+    return item;
+  };
   // 1) 由外向内展开 each/if（计数配对，允许 body 内含嵌套块）
   const openRe = /\{\{#(each|if)\s+([\w.]+)\}\}/g;
   let m;
@@ -196,7 +207,7 @@ function render(tpl, ctx) {
       const arr = get(ctx, path);
       const list = Array.isArray(arr) ? arr : get(data, path);
       replacement = Array.isArray(list)
-        ? list.map((item) => render(body, item)).join('')
+        ? list.map((item) => render(body, eachItem(item))).join('')
         : '';
     } else {
       const v = get(ctx, path) != null ? get(ctx, path) : get(data, path);
