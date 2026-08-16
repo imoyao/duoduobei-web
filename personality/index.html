@@ -99,7 +99,8 @@
   .wave { display: block; width: 100%; height: 26px; margin-top: 20px; opacity: .55; }
 
   .scene-tag {
-    display: inline-block; font-size: 12px; color: var(--brand-deep);
+    display: none; /* 内部结构化标签（场景分型 / 定位维度），不对用户展示 */
+    font-size: 12px; color: var(--brand-deep);
     border: 1px solid rgba(204, 61, 39, .45); background: rgba(227, 79, 56, .06);
     border-radius: 999px; padding: 2px 10px; margin-bottom: 10px; font-weight: 600;
   }
@@ -120,7 +121,7 @@
   .opt.sel .k { background: var(--brand); border-color: var(--brand); color: #fff; }
 
   /* 双命运提示（正反例）：选中选项后展示，强调同一操作在市场中的两种结局 */
-  .aft { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; animation: fade .25s var(--ease); }
+  .aft { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; animation: fade .25s var(--ease); scroll-margin-top: 56px; }
   .aft-title { font-size: 12px; color: var(--ink-3); text-align: center; margin-bottom: 8px; letter-spacing: 1px; }
   .aft-row { display: flex; gap: 10px; }
   .aft-card { flex: 1; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; line-height: 1.6; }
@@ -255,7 +256,7 @@
       <h1>海洋投资人格探索器</h1>
       <div class="sub">多多贝 · 验证期盲测切片 v0.1（脱敏）</div>
       <p class="desc">先回答 2 道定位题，再经历 6 个真实投资情境。没有标准答案，我们只看你面对涨跌时的本能反应，最后生成你的「五维投资人格雷达图」。</p>
-      <p class="tiny">全程不展示具体日期与点位，不展示 K 线对比，仅用于认知探索。约 2 分钟。</p>
+      <p class="tiny">每道真实情境都配行情对比，约 2 分钟，看完你会更懂自己的交易本能。</p>
       <svg class="wave" viewBox="0 0 400 26" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0,14 C50,6 90,22 140,14 C190,6 230,22 280,14 C330,6 370,22 400,14 L400,26 L0,26 Z" fill="rgba(227,79,56,.10)"/>
       </svg>
@@ -484,12 +485,12 @@ function curStep() { return steps[idx]; }
 
 function render() {
   const s = curStep();
+  // 内部结构化标签（场景分型 / 定位维度）仅用于题库组织，不对用户暴露，避免泄露测试目的
+  document.getElementById("scene").style.display = "none";
   if (s.type === "q0") {
     const q0 = Q0[s.id];
-    document.getElementById("scene").textContent = q0.scene;
     document.getElementById("ctx").textContent = q0.context;
   } else {
-    document.getElementById("scene").textContent = s.scene;
     document.getElementById("ctx").textContent = s.q.context;
   }
   const box = document.getElementById("opts");
@@ -510,6 +511,12 @@ function render() {
         const sel = document.querySelector("#opts button.opt.sel");
         if (sel) sel.classList.add("q0-lock"); // render 已重建按钮，需重新取选中项
         scheduleAutoNext();
+      } else {
+        // 选择后自动滚动到双命运对比区，免去手动下滑（移动端同样适用，无需左右栏锚点）
+        const aft = document.getElementById("aft");
+        if (aft.style.display !== "none") {
+          setTimeout(() => aft.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+        }
       }
     };
     box.appendChild(b);
@@ -538,12 +545,14 @@ function render() {
   // 上一步：除第 1 屏（Q0-1）外都提供，定位题页也可回退修正
   prevBtn.style.display = idx >= 1 ? "" : "none";
 
-  // 双命运提示：选中选项后展示该题正反例（Q0 定位题无此内容）
+  // 双命运提示：选中选项后展示该选项对应的市场对比（B 改动：aftermath 下沉到选项，
+  // 不同选择 → 不同真实标的对比；选项未单独配置时回退到题级 aftermath，兼容旧数据）
   const aft = document.getElementById("aft");
-  if (s.type === "q0" || answers[idx] === null || !s.q.aftermath) {
+  const selOpt = (s.type === "q") ? s.q.options[answers[idx]] : null;
+  const am = (selOpt && selOpt.aftermath) || (s.type === "q" ? s.q.aftermath : null);
+  if (!am || answers[idx] === null) {
     aft.style.display = "none"; aft.innerHTML = "";
   } else {
-    const am = s.q.aftermath;
     aft.style.display = "block";
     let assets = "";
     if (am.positive_asset || am.negative_asset) {
@@ -606,13 +615,14 @@ function prev() {
   if (idx <= 0) return;
   clearTimeout(autoTimer);
   idx--;
+  window.scrollTo({ top: 0, behavior: "smooth" });
   render();
 }
 
 function next() {
   clearTimeout(autoTimer);
   if (answers[idx] === null) return;
-  if (idx < steps.length - 1) { idx++; render(); }
+  if (idx < steps.length - 1) { idx++; window.scrollTo({ top: 0, behavior: "smooth" }); render(); }
   else { compute(); show("result"); drawRadar(); renderReport(); }
 }
 
