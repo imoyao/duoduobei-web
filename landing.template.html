@@ -1960,8 +1960,8 @@
 
     /* ===== 流体潮汐背景（WebGL）：品牌暖色水纹 + 呼吸/生命感 =====
        设计取舍：鹦鹉螺螺线(.hero-tidal)仍为主角，本层为全幅流体底衬。
-       色彩取品牌三色（水绿/暖纸/珊瑚），fbm 轻域扭曲 + 大块低频水色，
-       像水彩晕染般柔软流动；u_breath 极缓调制明暗，给出“呼吸感/生命感”。
+       色彩取品牌三色但大幅漂向暖纸底、整体 alpha 很淡，仅作“带一点点颜色”的水感底衬，
+       fbm 轻域扭曲 + 大块低频水色，像水彩晕染般柔软流动；u_breath 极缓调制明暗。
        点击 hero 任意处会注入柔和水环涟漪（u_ripples 数组，约 2s 寿命，扩散淡出）。
        护栏：prefers-reduced-motion 仅渲染静态单帧；WebGL 不可用回退 CSS 渐变；
        移动端降低分辨率(dpr/scale)以保证性能。*/
@@ -2047,14 +2047,17 @@
           }
           ripple = clamp(ripple, -1.0, 1.0);
           n = clamp(n + ripple * 0.05, 0.0, 1.0);              // 扰动水色成环
-          // 品牌色阶（低对比、平滑过渡，像水彩晕染）：水绿 -> 暖纸 -> 珊瑚
+          // 品牌色阶（极淡，仅“带一点点”颜色，不干扰阅读）
+          vec3 paper = vec3(0.992, 0.984, 0.969);        // 暖纸底
           vec3 teal  = vec3(0.482, 0.769, 0.604);
-          vec3 cream = vec3(0.992, 0.984, 0.969);
           vec3 coral = vec3(0.890, 0.310, 0.220);
-          vec3 col = (n < 0.5) ? mix(teal, cream, n/0.5) : mix(cream, coral, (n-0.5)/0.5);
-          col *= mix(0.96, 1.04, uv.y);                  // 极轻的顶亮底深
-          float alpha = (0.11 + 0.09 * n) * (0.94 + 0.10 * u_breath); // 柔和、整体偏低，无亮纹
-          alpha += abs(ripple) * 0.05;                                // 涟漪处极淡的高光环
+          // 把品牌色大幅漂向暖纸，只留一丝倾向
+          vec3 colT = mix(paper, teal,  0.30);
+          vec3 colC = mix(paper, coral, 0.32);
+          vec3 col = (n < 0.5) ? mix(colT, paper, n/0.5) : mix(paper, colC, (n-0.5)/0.5);
+          col *= mix(0.97, 1.03, uv.y);                  // 极轻的顶亮底深
+          float alpha = (0.055 + 0.05 * n) * (0.94 + 0.10 * u_breath); // 整体很淡，仅作水感底衬
+          alpha += abs(ripple) * 0.035;                                // 涟漪高光也放淡
           float edge = smoothstep(0.0, 0.25, uv.x) * smoothstep(1.0, 0.75, uv.x);
           edge *= smoothstep(1.0, 0.78, uv.y);           // 左右/顶部羽化融入背景
           gl_FragColor = vec4(col, alpha * edge);
