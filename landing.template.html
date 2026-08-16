@@ -2047,17 +2047,17 @@
           }
           ripple = clamp(ripple, -1.0, 1.0);
           n = clamp(n + ripple * 0.05, 0.0, 1.0);              // 扰动水色成环
-          // 品牌色阶（极淡，仅“带一点点”颜色，不干扰阅读）
+          // 品牌色阶（淡，仅“带一点点”颜色，不干扰阅读）
           vec3 paper = vec3(0.992, 0.984, 0.969);        // 暖纸底
           vec3 teal  = vec3(0.482, 0.769, 0.604);
           vec3 coral = vec3(0.890, 0.310, 0.220);
-          // 把品牌色大幅漂向暖纸，只留一丝倾向
-          vec3 colT = mix(paper, teal,  0.30);
-          vec3 colC = mix(paper, coral, 0.32);
+          // 品牌色漂向暖纸，留轻浅倾向（比 0.30 略回一点，避免看不清）
+          vec3 colT = mix(paper, teal,  0.45);
+          vec3 colC = mix(paper, coral, 0.46);
           vec3 col = (n < 0.5) ? mix(colT, paper, n/0.5) : mix(paper, colC, (n-0.5)/0.5);
           col *= mix(0.97, 1.03, uv.y);                  // 极轻的顶亮底深
-          float alpha = (0.055 + 0.05 * n) * (0.94 + 0.10 * u_breath); // 整体很淡，仅作水感底衬
-          alpha += abs(ripple) * 0.035;                                // 涟漪高光也放淡
+          float alpha = (0.08 + 0.06 * n) * (0.94 + 0.10 * u_breath); // 整体淡，仅作水感底衬
+          alpha += abs(ripple) * 0.045;                                // 涟漪高光也放淡
           float edge = smoothstep(0.0, 0.25, uv.x) * smoothstep(1.0, 0.75, uv.x);
           edge *= smoothstep(1.0, 0.78, uv.y);           // 左右/顶部羽化融入背景
           gl_FragColor = vec4(col, alpha * edge);
