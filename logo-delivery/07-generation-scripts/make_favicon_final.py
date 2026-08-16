@@ -94,7 +94,7 @@ def main():
     H = 70 + len(forms) * (cell + 36)
     img = Image.new("RGBA", (W, H), (255, 255, 255, 255))
     d = ImageDraw.Draw(img)
-    d.text((12, 18), "多倍贝 favicon 终选 3 形态对比", fill=(26, 24, 22, 255), font=fntb)
+    d.text((12, 18), "多多贝 favicon 终选 3 形态对比", fill=(26, 24, 22, 255), font=fntb)
     for j, c in enumerate(COLS):
         d.text((label_w + j * cell + cell // 2, 50), c,
                fill=(107, 101, 92, 255), font=fnts, anchor="mm")

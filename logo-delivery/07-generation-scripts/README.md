@@ -1,6 +1,6 @@
 # Logo 生成脚本（交付代码）
 
-本目录包含生成「多倍贝」全部 Logo 交付物的 Python 脚本。所有脚本**自包含**：
+本目录包含生成「多多贝」全部 Logo 交付物的 Python 脚本。所有脚本**自包含**：
 `logo_generator.py` 被其余脚本 `import`，资源图在 `assets/`，字体为系统 Noto Sans CJK SC。
 
 > **哪一个是主站 Logo 脚本？**

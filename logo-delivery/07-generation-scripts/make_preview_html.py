@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-make_preview_html.py — 生成「多倍贝」Logo 设计预览页 preview.html
+make_preview_html.py — 生成「多多贝」Logo 设计预览页 preview.html
 
 产物：logo-delivery/preview.html（自包含单文件，SVG 直接内联 + favicon.ico base64 内嵌）
 
 内容（对照交付需求）：
-  (a) 网站名「多倍贝」
+  (a) 网站名「多多贝」
   (b) 三套背景：品牌规定色(#FDFBF7) / 浅色纯白(#FFFFFF) / 深色近黑(#1A1816)
   (c) 主 Logo 4 形态：直角 / 圆 / 超椭圆 / 圆角，× 三背景
   (d) 主 Logo 与 favicon 两形态的尺寸阶梯
-  (e) 横版组合「多倍贝 · 投资账本」字标版（黄金比 0.618，浅/深双底）
+  (e) 横版组合「多多贝 · 投资账本」字标版（黄金比 0.618，浅/深双底）
   (f) 备注说明：居中修正、红眼修复、16px 辨识、双轨决策、品牌名演变、前端对接坑
 
 渲染机制（重要教训，见下方注释）：
@@ -120,7 +120,7 @@ W(
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>多倍贝 · Logo 设计预览</title>
+<title>多多贝 · Logo 设计预览</title>
 <style>
   :root{--brand:#E34F38; --cream:#FDFBF7; --ink:#1A1816; --sub:#6B655C; --line:#E7E2D9;}
   *{box-sizing:border-box}
@@ -176,8 +176,8 @@ W(
 <body>
 <div class="wrap">
 <header>
-  <h1>多倍贝 · Logo 设计预览</h1>
-  <p>品牌：多倍贝（DuoBeiBei）· 投资账本　|　版本：v1.0　|　生成日期：2026-08-08</p>
+  <h1>多多贝 · Logo 设计预览</h1>
+  <p>品牌：多多贝（DuoBeiBei）· 投资账本　|　版本：v1.0　|　生成日期：2026-08-08</p>
   <p>本页为自包含单文件预览：SVG 直接内联（每个实例独立 id 空间），favicon.ico 已 base64 内嵌，可直接双击打开或随包分发。</p>
 </header>
 """
@@ -278,8 +278,8 @@ W("</div></div></div></section>")
 if combo_svg:
     W(
         """<section>
-  <h2>六、横版组合 ·「多倍贝 · 投资账本」 <span class="tag">(e) 带字标版 / 黄金分割比 0.618</span></h2>
-  <p class="lead">图标 + 文字标：主名「多倍贝」60px（品牌红 #E34F38，Bold），副标「投资账本」37px（次要灰 #6B655C，Regular），
+  <h2>六、横版组合 ·「多多贝 · 投资账本」 <span class="tag">(e) 带字标版 / 黄金分割比 0.618</span></h2>
+  <p class="lead">图标 + 文字标：主名「多多贝」60px（品牌红 #E34F38，Bold），副标「投资账本」37px（次要灰 #6B655C，Regular），
   副标字号 = 60 × <b>0.618 黄金比例</b>。下方为浅色 / 深色双底对照（直接内联 SVG，文字原生渲染）。</p>
   <div class="combo-row">
     <div class="c" style="background:#FDFBF7">"""
@@ -297,7 +297,7 @@ W(
     """<section>
   <h2>七、备注说明 <span class="tag">(f) 关键决策、成因与前端对接坑</span></h2>
   <ul class="notes">
-    <li><b>品牌名演变：</b>网站最终定名 <b>「多倍贝」</b>（DuoBeiBei）。早期候选「满福 / 慢富 / 涨乐多 / 叽咕 / 投资账」已弃用，文档与产物统一以「多倍贝」为准。</li>
+    <li><b>品牌名演变：</b>网站最终定名 <b>「多多贝」</b>（DuoBeiBei）。早期候选「满福 / 慢富 / 涨乐多 / 叽咕 / 投资账」已弃用，文档与产物统一以「多多贝」为准。</li>
     <li><b>居中修正：</b>初版画面偏左。最终以「缺口」为视觉对称基准，采用<b>白质心居中</b>（整体右移 dx=+41.6, dy=+15.3），消除偏左。</li>
     <li><b>红眼修复（Form 4）：</b>中心红圆用 <code>fill-rule="evenodd"</code> 强制为内孔（<code>INNER_HOLE=18</code>），避免早期 overlay 红圆经白螺带缝隙漏连外环产生的「白条」伪影。</li>
     <li><b>16px 辨识性：</b>主 logo 在 16px 退化为「带白点的红块」（9 碎片，不可辨）；favicon Form 4 为单一连通块（清晰）。故 <b>16px 用 favicon 版</b>，≥24px 可用主 logo。</li>
@@ -318,7 +318,7 @@ W(
 )
 
 W(
-    """<footer>多倍贝 Logo 设计预览 · 自包含单文件（直接内联 SVG）· 由 make_preview_html.py 生成</footer>
+    """<footer>多多贝 Logo 设计预览 · 自包含单文件（直接内联 SVG）· 由 make_preview_html.py 生成</footer>
 </div>
 </body>
 </html>"""

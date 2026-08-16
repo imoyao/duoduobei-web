@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""make_combo.py — 横版组合生成器（"多倍贝 · 投资账本"）
+"""make_combo.py — 横版组合生成器（"多多贝 · 投资账本"）
 
 副标字号 = 主名字号 × SUB_SCALE（黄金比例 0.618）。
-主名：多倍贝（红粗 700，60px）
+主名：多多贝（红粗 700，60px）
 副标：投资账本（灰常规 400，60×0.618≈37px）
 分隔符：·（灰色）
 """
@@ -33,7 +33,7 @@ def build(sub_scale=SUB_SCALE):
     fs_main = 60.0; fs_sub = fs_main * sub_scale
     fnt_b = ImageFont.truetype(FONT_B, int(fs_main))
     fnt_r = ImageFont.truetype(FONT_R, int(fs_sub))
-    name, dot, sub = "多倍贝", "·", "投资账本"
+    name, dot, sub = "多多贝", "·", "投资账本"
     w1 = fnt_b.getlength(name)
     wdot = fnt_r.getlength(" " + dot + " ")
     w2 = fnt_r.getlength(sub)

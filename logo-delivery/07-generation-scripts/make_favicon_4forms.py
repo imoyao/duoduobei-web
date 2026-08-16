@@ -158,7 +158,7 @@ def main():
     d = ImageDraw.Draw(img)
 
     # 表头
-    d.text((12, 18), "多倍贝 favicon 4 形态横向评比", fill=(26, 24, 22, 255), font=fntb)
+    d.text((12, 18), "多多贝 favicon 4 形态横向评比", fill=(26, 24, 22, 255), font=fntb)
     for j, c in enumerate(COLS):
         d.text((label_w + j * cell + cell // 2, 50), c,
                fill=(107, 101, 92, 255), font=fnts, anchor="mm")

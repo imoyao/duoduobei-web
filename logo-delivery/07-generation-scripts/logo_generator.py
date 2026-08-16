@@ -32,7 +32,7 @@ SRC_DEFAULT = os.path.join(os.path.dirname(__file__), "assets", "4764.jpg")
 CROP_SRC = (111, 293, 67, 249)
 # 螺旋方向：V1 旋转 30° 顺时针（在 SVG 内 transform 旋转），与目标 4768.jpg 一致
 SPIRAL_ROTATE = -30.0
-RED   = "#E34F38"   # 品牌令牌 --brand-700 / --color-rise（多倍贝 设计语言 v2.3.3）
+RED   = "#E34F38"   # 品牌令牌 --brand-700 / --color-rise（多多贝 设计语言 v2.3.3）
 WHITE = "#FDFBF7"   # 品牌暖奶油令牌 --bg-page（螺线为负空间填充色；如需更高小尺寸对比可改 --bg-card #FFFFFF）
 VIEWBOX = 512
 # V1 icon 边长 182，目标 442（≈86%），给红方块四周留 ~35px 均匀珊瑚红边距
