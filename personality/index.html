@@ -220,15 +220,13 @@
   .hook-utility { color: var(--ink-3); text-decoration: none; cursor: pointer; }
   .hook-utility:hover { color: var(--brand-deep); }
 
-  /* 微信二维码占位：替换为真实二维码后删除占位说明 */
-  .qr {
-    width: 132px; height: 132px; margin: 12px auto 14px; border-radius: 12px;
-    border: 1.5px dashed var(--brand-light); background: #FFF7F4;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.5;
+  /* 公众号二维码：真实图片，白底留白便于扫码，圆角+轻描边+轻阴影更清晰 */
+  .qr-block { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+  .qr-img {
+    width: 104px; height: 104px; background: #fff; padding: 6px; border-radius: 10px;
+    border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(0,0,0,.06); display: block;
   }
-  /* hook 内的迷你尺寸：让位给主转化与二级 CTA */
-  .qr-mini { width: 72px; height: 72px; margin: 0; border-radius: 8px; font-size: 10.5px; line-height: 1.4; }
+  .qr-cap { font-size: 11px; color: var(--ink-3); line-height: 1.3; }
 
   input[type=text] {
     width: 100%; padding: 13px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--line);
@@ -318,7 +316,12 @@
 
       <!-- 辅助渠道 + 工具动作：用虚线分隔的 footer，不再打断主流程 -->
       <div class="hook-meta">
-        <div class="qr qr-mini">微信公众号<br/>（关注获取更新）</div>
+        <div class="qr-block">
+          <img class="qr-img" src="https://open.weixin.qq.com/qr/code?username=idealyard"
+               alt="多多贝公众号二维码" referrerpolicy="no-referrer" loading="lazy"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='none';" />
+          <span class="qr-cap">关注公众号 · 产品动态</span>
+        </div>
         <a class="hook-utility" href="javascript:void(0)" onclick="location.reload()">重新测一次</a>
       </div>
     </div>
