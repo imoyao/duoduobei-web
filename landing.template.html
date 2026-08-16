@@ -1960,8 +1960,8 @@
 
     /* ===== 流体潮汐背景（WebGL）：品牌暖色水纹 + 呼吸/生命感 =====
        设计取舍：鹦鹉螺螺线(.hero-tidal)仍为主角，本层为全幅流体底衬。
-       色彩取品牌三色（水绿/暖纸/珊瑚），fbm 域扭曲模拟洋流漩涡，
-       u_breath 缓慢调制对比度与透明度，给出“呼吸感/生命感”。
+       色彩取品牌三色（水绿/暖纸/珊瑚），fbm 轻域扭曲 + 大块低频水色，
+       像水彩晕染般柔软流动；u_breath 极缓调制明暗，给出“呼吸感/生命感”。
        护栏：prefers-reduced-motion 仅渲染静态单帧；WebGL 不可用回退 CSS 渐变；
        移动端降低分辨率(dpr/scale)以保证性能。*/
     (function initTide() {
@@ -2017,24 +2017,26 @@
           vec2 uv = gl_FragCoord.xy / u_res.xy;
           float aspect = u_res.x / u_res.y;
           vec2 p = uv; p.x *= aspect;
-          float t = u_time * 0.05;                       // 慢速流动
-          // 域扭曲：制造洋流漩涡/层叠感
-          vec2 q = vec2(fbm(p*1.4 + vec2(0.0, t)), fbm(p*1.4 + vec2(3.2, -t*0.8)));
-          vec2 r = vec2(fbm(p*1.4 + 3.0*q + vec2(1.7, 9.2) + 0.12*t),
-                        fbm(p*1.4 + 3.0*q + vec2(8.3, 2.8) - 0.10*t));
-          float n = fbm(p*1.6 + 3.2*r);
+          float t = u_time * 0.010;                      // 很慢的流动，避免眩晕
+          // 轻柔域扭曲：只给大块水色一点缓慢起伏，不要紧绷的小漩涡
+          vec2 q = vec2(fbm(p*0.85 + vec2(0.0, t)),
+                        fbm(p*0.85 + vec2(3.2, -t*0.6)));
+          vec2 r = vec2(fbm(p*0.95 + 1.05*q + vec2(1.7, 9.2) + 0.05*t),
+                        fbm(p*0.95 + 1.05*q + vec2(8.3, 2.8) - 0.04*t));
+          float n = fbm(p*0.95 + 1.15*r);
           n = n * 0.5 + 0.5;                             // 0..1
-          float br = 0.82 + 0.34 * u_breath;             // 呼吸调制对比度
+          // 轻柔呼吸：只微微改变明暗，不强烈拉对比（防“亮纹跳动”）
+          float br = 0.94 + 0.12 * u_breath;
           n = clamp((n - 0.5) * br + 0.5, 0.0, 1.0);
-          // 品牌色阶：水绿 -> 暖纸 -> 珊瑚
+          // 品牌色阶（低对比、平滑过渡，像水彩晕染）：水绿 -> 暖纸 -> 珊瑚
           vec3 teal  = vec3(0.482, 0.769, 0.604);
           vec3 cream = vec3(0.992, 0.984, 0.969);
           vec3 coral = vec3(0.890, 0.310, 0.220);
           vec3 col = (n < 0.5) ? mix(teal, cream, n/0.5) : mix(cream, coral, (n-0.5)/0.5);
-          col *= mix(0.92, 1.08, uv.y);                   // 顶亮底深（浅海/深海）
-          float alpha = (0.16 + 0.20 * n) * (0.8 + 0.35 * u_breath);
-          float edge = smoothstep(0.0, 0.22, uv.x) * smoothstep(1.0, 0.78, uv.x);
-          edge *= smoothstep(1.0, 0.72, uv.y);            // 左右/顶部羽化融入背景
+          col *= mix(0.96, 1.04, uv.y);                  // 极轻的顶亮底深
+          float alpha = (0.11 + 0.09 * n) * (0.94 + 0.10 * u_breath); // 柔和、整体偏低，无亮纹
+          float edge = smoothstep(0.0, 0.25, uv.x) * smoothstep(1.0, 0.75, uv.x);
+          edge *= smoothstep(1.0, 0.78, uv.y);           // 左右/顶部羽化融入背景
           gl_FragColor = vec4(col, alpha * edge);
         }
       `;
@@ -2089,7 +2091,7 @@
       function draw(timeSec) {
         gl.uniform2f(uRes, canvas.width, canvas.height);
         gl.uniform1f(uTime, timeSec);
-        gl.uniform1f(uBreath, 0.5 + 0.5 * Math.sin(timeSec * 0.45)); // ~14s 呼吸周期
+        gl.uniform1f(uBreath, 0.5 + 0.5 * Math.sin(timeSec * 0.18)); // ~35s 绵长呼吸周期
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       }
 
