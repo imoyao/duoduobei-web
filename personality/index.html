@@ -362,11 +362,17 @@ function drawMiniKline(el, klines) {
     }]
   });
 }
+/* 资产引用解析：迁移后 aftermath 的 *_asset 为 {asset:"ast_x"} 引用 quiz.assets；
+   兼容旧内联结构（直接带 klines 的对象）。 */
+function resolveAsset(ref) {
+  if (ref && ref.asset && quiz && quiz.assets && quiz.assets[ref.asset]) return quiz.assets[ref.asset];
+  return ref; // 旧结构兜底
+}
 /* 按 data-side 从当前题 aftermath 取预烘焙 K 线绘制 */
 function renderStoredKlines(aft, am) {
   aft.querySelectorAll(".kline-ph[data-side]").forEach(el => {
     const side = el.dataset.side;
-    const asset = side === "pos" ? am.positive_asset : am.negative_asset;
+    const asset = resolveAsset(side === "pos" ? am.positive_asset : am.negative_asset);
     if (asset && Array.isArray(asset.klines) && asset.klines.length) {
       drawMiniKline(el, asset.klines);
     } else {
@@ -556,7 +562,7 @@ function render() {
     aft.style.display = "block";
     let assets = "";
     if (am.positive_asset || am.negative_asset) {
-      const pos = am.positive_asset, neg = am.negative_asset;
+      const pos = resolveAsset(am.positive_asset), neg = resolveAsset(am.negative_asset);
       assets = `
       <div class="aft-assets">
         <div class="aft-assets-title">背后是这两只标的 · 真实行情对比</div>
