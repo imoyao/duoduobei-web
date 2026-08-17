@@ -124,9 +124,21 @@
     .nav-more[data-has-active] .nav-more-toggle { color: var(--brand-700); font-weight: 600; }
 
     /* ---------- Hero（潮间带波纹背景） ---------- */
-    .hero { position: relative; overflow: hidden; }
+    .hero {
+      position: relative; overflow: hidden;
+      background:
+        radial-gradient(60% 50% at 82% 16%, rgba(227, 79, 56, 0.10), rgba(227, 79, 56, 0) 70%),
+        radial-gradient(55% 48% at 10% 90%, rgba(123, 196, 154, 0.16), rgba(123, 196, 154, 0) 70%),
+        linear-gradient(180deg, #FDFBF7 0%, #FBF4EC 100%);
+    }
+    /* WebGL 流体潮汐：最底层，鹦鹉螺螺线(.hero-tidal)压其上，文案/视觉再上层 */
+    #tide-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none; display: block;
+    }
+    .hero.no-webgl #tide-canvas { display: none; }
     .hero-tidal {
-      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0;
+      position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;
       pointer-events: none;
     }
     /* 鹦鹉螺对数螺线插画（品牌母题）：持续旋转 + 轻微呼吸，黄金比例占比 ~38% */
@@ -598,7 +610,6 @@
       .scenario-track { animation: none !important; }
       html { scroll-behavior: auto; }
       [data-reveal] { opacity: 1; transform: none; transition: none; }
-      .tidal-track { animation: none !important; }
     }
 
   /* ========================================
@@ -653,16 +664,6 @@
     100% { transform: translate(var(--dx, 20px), var(--dy, -60px)) scale(1.5); opacity: 0; }
   }
   .nh-bubble--pop { animation: nau-bubble-pop 1.7s cubic-bezier(0.19,1,0.22,1) forwards; }
-
-  /* TIDAL WAVES */
-  .tidal-waves { position: absolute; bottom: -10px; left: -10%; right: -10%; height: 100px; pointer-events: none; overflow: hidden; }
-  .tidal-path { fill: none; stroke-linecap: round; }
-  .tp-1 { stroke: rgba(123,196,154,0.5); stroke-width: 1.2; }
-  .tp-2 { stroke: rgba(123,196,154,0.35); stroke-width: 0.9; opacity: 0.7; }
-  .tp-3 { stroke: rgba(123,196,154,0.22); stroke-width: 0.6; opacity: 0.4; }
-  .tidal-fill { fill: url(#tidalGrad); opacity: 0.12; }
-  @keyframes tidalFlow { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-  .tidal-track { animation: tidalFlow 18s linear infinite; }
 
   /* SCALLOP SHELL */
   .scallop-svg { width: 100%; height: 100%; overflow: visible; }
@@ -1141,6 +1142,7 @@
 
   <!-- Hero：潮间带波纹背景 + Araujo 风格鹦鹉螺 -->
   <header class="hero">
+    <canvas id="tide-canvas" aria-hidden="true"></canvas>
     <svg class="hero-tidal" viewBox="0 0 1200 680" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
     <div class="container hero-inner">
       <div class="hero-content">
@@ -1173,11 +1175,6 @@
                 <stop offset="78%" stop-color="#C0352A" stop-opacity="0.42"/>
                 <stop offset="100%" stop-color="#8E2A1E" stop-opacity="0.32"/>
               </radialGradient>
-              <!-- 潮汐渐变 -->
-              <linearGradient id="tidalGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#E34F38" stop-opacity="0"/>
-                <stop offset="100%" stop-color="#CC3D27" stop-opacity="0.45"/>
-              </linearGradient>
             </defs>
 
             <!-- 深海环境晕染：极浅暖底超椭圆，暗示幽暗海水 -->
@@ -1209,23 +1206,6 @@
             </g>
           </svg>
         </div>
-
-        <!-- 潮汐动态曲线（独立于鹦鹉螺旋转，保持水平波动） -->
-        <div class="tidal-waves">
-            <svg class="tidal-wave-svg" viewBox="0 0 600 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <g class="tidal-track">
-                <!-- 波浪路径：双层实现无缝循环 -->
-                <path class="tidal-fill" d="M0,60 Q37.5,20 75,50 T150,55 T225,45 T300,58 T375,48 T450,56 T525,46 T600,54 L600,120 L0,120 Z
-                                             M600,60 Q637.5,20 675,50 T750,55 T825,45 T900,58 T975,48 T1050,56 T1125,46 T1200,54 L1200,120 L600,120 Z"/>
-                <path class="tidal-path tp-1" d="M0,55 C20,35 50,40 75,52 C100,64 125,48 150,55 C175,62 200,42 225,52 C250,62 275,44 300,55 C325,66 350,42 375,53 C400,64 425,44 450,55 C475,66 500,42 525,53 C550,64 575,46 600,55
-                                              C620,35 650,40 675,52 C700,64 725,48 750,55 C775,62 800,42 825,52 C850,62 875,44 900,55 C925,66 950,42 975,53 C1000,64 1025,44 1050,55 C1075,66 1100,42 1125,53 C1150,64 1175,46 1200,55"/>
-                <path class="tidal-path tp-2" d="M0,68 C18,55 45,58 72,66 C99,74 126,60 153,67 C180,74 207,56 234,66 C261,76 288,57 315,67 C342,77 369,57 396,67 C423,77 450,58 477,67 C504,76 531,58 558,67 C585,76 592,62 600,68
-                                              C618,55 645,58 672,66 C699,74 726,60 753,67 C780,74 807,56 834,66 C861,76 888,57 915,67 C942,77 969,57 996,67 C1023,77 1050,58 1077,67 C1104,76 1131,58 1158,67 C1185,76 1192,62 1200,68"/>
-                <path class="tidal-path tp-3" d="M0,78 C15,70 40,73 65,79 C90,85 115,73 140,79 C165,85 190,71 215,79 C240,87 265,72 290,79 C315,86 340,72 365,79 C390,86 415,73 440,79 C465,85 490,73 515,79 C540,85 565,74 590,79 C597,81 599,78 600,78
-                                              C615,70 640,73 665,79 C690,85 715,73 740,79 C765,85 790,71 815,79 C840,87 865,72 890,79 C915,86 940,72 965,79 C990,86 1015,73 1040,79 C1065,85 1090,73 1115,79 C1140,85 1165,74 1190,79 C1197,81 1199,78 1200,78"/>
-              </g>
-            </svg>
-          </div>
       </div>
     </div>
   </header>
@@ -1976,6 +1956,215 @@
           });
         }
       }
+    })();
+
+    /* ===== 流体潮汐背景（WebGL）：品牌暖色水纹 + 呼吸/生命感 =====
+       设计取舍：鹦鹉螺螺线(.hero-tidal)仍为主角，本层为全幅流体底衬。
+       色彩取品牌三色但大幅漂向暖纸底、整体 alpha 很淡，仅作“带一点点颜色”的水感底衬，
+       fbm 轻域扭曲 + 大块低频水色，像水彩晕染般柔软流动；u_breath 极缓调制明暗。
+       点击 hero 任意处会注入柔和水环涟漪（u_ripples 数组，约 2s 寿命，扩散淡出）。
+       护栏：prefers-reduced-motion 仅渲染静态单帧；WebGL 不可用回退 CSS 渐变；
+       移动端降低分辨率(dpr/scale)以保证性能。*/
+    (function initTide() {
+      const canvas = document.getElementById('tide-canvas');
+      if (!canvas) return;
+      const hero = canvas.closest('.hero');
+
+      const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false })
+              || canvas.getContext('experimental-webgl', { alpha: true, premultipliedAlpha: false });
+      if (!gl) {
+        if (hero) hero.classList.add('no-webgl');
+        return;
+      }
+
+      const VERT = `
+        attribute vec2 a_pos;
+        void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+      `;
+      const FRAG = `
+        precision highp float;
+        uniform vec2 u_res;
+        uniform float u_time;
+          uniform float u_breath;
+        uniform int u_rippleCount;
+        uniform vec3 u_ripples[8];   // x,y 归一化(已翻转 y)，z = 年龄(秒)
+        vec3 mod289(vec3 x){ return x - floor(x*(1.0/289.0))*289.0; }
+        vec2 mod289(vec2 x){ return x - floor(x*(1.0/289.0))*289.0; }
+        vec3 permute(vec3 x){ return mod289(((x*34.0)+1.0)*x); }
+        float snoise(vec2 v){
+          const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+          vec2 i = floor(v + dot(v, C.yy));
+          vec2 x0 = v - i + dot(i, C.xx);
+          vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+          vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1;
+          i = mod289(i);
+          vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+          vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+          m = m*m; m = m*m;
+          vec3 x = 2.0 * fract(p * C.www) - 1.0;
+          vec3 h = abs(x) - 0.5;
+          vec3 ox = floor(x + 0.5);
+          vec3 a0 = x - ox;
+          m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+          vec3 g;
+          g.x = a0.x * x0.x + h.x * x0.y;
+          g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+          return 130.0 * dot(m, g);
+        }
+        float fbm(vec2 p){
+          float s = 0.0; float a = 0.55; float f = 1.0;
+          for (int i = 0; i < 4; i++) { s += a * snoise(p * f); f *= 2.0; a *= 0.5; }
+          return s;
+        }
+        void main(){
+          vec2 uv = gl_FragCoord.xy / u_res.xy;
+          float aspect = u_res.x / u_res.y;
+          vec2 p = uv; p.x *= aspect;
+          float t = u_time * 0.010;                      // 很慢的流动，避免眩晕
+          // 轻柔域扭曲：只给大块水色一点缓慢起伏，不要紧绷的小漩涡
+          vec2 q = vec2(fbm(p*0.85 + vec2(0.0, t)),
+                        fbm(p*0.85 + vec2(3.2, -t*0.6)));
+          vec2 r = vec2(fbm(p*0.95 + 1.05*q + vec2(1.7, 9.2) + 0.05*t),
+                        fbm(p*0.95 + 1.05*q + vec2(8.3, 2.8) - 0.04*t));
+          float n = fbm(p*0.95 + 1.15*r);
+          n = n * 0.5 + 0.5;                             // 0..1
+          // 轻柔呼吸：只微微改变明暗，不强烈拉对比（防“亮纹跳动”）
+          float br = 0.94 + 0.12 * u_breath;
+          n = clamp((n - 0.5) * br + 0.5, 0.0, 1.0);
+          // 点击涟漪：从点击点向外扩散的柔和水环（与整体软调一致）
+          float ripple = 0.0;
+          for (int i = 0; i < 8; i++) {
+            if (i >= u_rippleCount) break;
+            vec3 R = u_ripples[i];
+            float age = R.z;
+            if (age < 0.0) continue;
+            vec2 c = R.xy; c.x *= aspect;
+            float d = distance(p, c);
+            float radius = age * 0.42;                         // 扩散速度
+            float life = 1.0 - clamp(age / 2.0, 0.0, 1.0);     // 2s 寿命
+            float band = exp(-pow((d - radius) * 5.0, 2.0));   // 沿环集中成柔环
+            ripple += sin((d - radius) * 16.0) * band * life;
+          }
+          ripple = clamp(ripple, -1.0, 1.0);
+          n = clamp(n + ripple * 0.05, 0.0, 1.0);              // 扰动水色成环
+          // 品牌色阶（淡，仅“带一点点”颜色，不干扰阅读）
+          vec3 paper = vec3(0.992, 0.984, 0.969);        // 暖纸底
+          vec3 teal  = vec3(0.482, 0.769, 0.604);
+          vec3 coral = vec3(0.890, 0.310, 0.220);
+          // 品牌色漂向暖纸，留轻浅倾向（比 0.30 略回一点，避免看不清）
+          vec3 colT = mix(paper, teal,  0.45);
+          vec3 colC = mix(paper, coral, 0.46);
+          vec3 col = (n < 0.5) ? mix(colT, paper, n/0.5) : mix(paper, colC, (n-0.5)/0.5);
+          col *= mix(0.97, 1.03, uv.y);                  // 极轻的顶亮底深
+          float alpha = (0.08 + 0.06 * n) * (0.94 + 0.10 * u_breath); // 整体淡，仅作水感底衬
+          alpha += abs(ripple) * 0.045;                                // 涟漪高光也放淡
+          float edge = smoothstep(0.0, 0.25, uv.x) * smoothstep(1.0, 0.75, uv.x);
+          edge *= smoothstep(1.0, 0.78, uv.y);           // 左右/顶部羽化融入背景
+          gl_FragColor = vec4(col, alpha * edge);
+        }
+      `;
+
+      function compile(type, src) {
+        const sh = gl.createShader(type);
+        gl.shaderSource(sh, src);
+        gl.compileShader(sh);
+        if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+          console.warn('[tide] shader compile failed:', gl.getShaderInfoLog(sh));
+          return null;
+        }
+        return sh;
+      }
+      const vs = compile(gl.VERTEX_SHADER, VERT);
+      const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+      if (!vs || !fs) { if (hero) hero.classList.add('no-webgl'); return; }
+      const prog = gl.createProgram();
+      gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        console.warn('[tide] program link failed:', gl.getProgramInfoLog(prog));
+        if (hero) hero.classList.add('no-webgl');
+        return;
+      }
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+      const aPos = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+      const uRes = gl.getUniformLocation(prog, 'u_res');
+      const uTime = gl.getUniformLocation(prog, 'u_time');
+      const uBreath = gl.getUniformLocation(prog, 'u_breath');
+      const uRippleCount = gl.getUniformLocation(prog, 'u_rippleCount');
+      const uRipples = gl.getUniformLocation(prog, 'u_ripples');
+      const RIPPLE_MAX = 8, RIPPLE_LIFE = 2.0;
+      const ripples = [];   // { x, y, t0 }  x,y 归一化[0,1]，y 已按 WebGL 翻转
+
+      function resize() {
+        const isMobile = window.matchMedia('(max-width: 720px)').matches;
+        const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 2);
+        const scale = isMobile ? 0.55 : 0.85;
+        const w = Math.max(1, Math.floor(canvas.clientWidth * dpr * scale));
+        const h = Math.max(1, Math.floor(canvas.clientHeight * dpr * scale));
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w; canvas.height = h;
+        }
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+      resize();
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const start = performance.now();
+      const rippleData = new Float32Array(RIPPLE_MAX * 3);
+      function draw(timeSec) {
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.uniform1f(uTime, timeSec);
+        gl.uniform1f(uBreath, 0.5 + 0.5 * Math.sin(timeSec * 0.18)); // ~35s 绵长呼吸周期
+        // 涟漪：剔除过期项，打包成 vec3 数组上传
+        for (let i = ripples.length - 1; i >= 0; i--) {
+          if (timeSec - ripples[i].t0 > RIPPLE_LIFE) ripples.splice(i, 1);
+        }
+        rippleData.fill(0);
+        for (let i = 0; i < ripples.length; i++) {
+          const r = ripples[i];
+          rippleData[i*3]   = r.x;
+          rippleData[i*3+1] = r.y;
+          rippleData[i*3+2] = timeSec - r.t0;
+        }
+        gl.uniform1i(uRippleCount, ripples.length);
+        gl.uniform3fv(uRipples, rippleData);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+
+      // 点击注入涟漪（仅 hero 范围内生效；reduced-motion 不响应，避免多余动效）
+      const heroEl = canvas.closest('.hero');
+      if (heroEl && !reduceMotion) {
+        heroEl.addEventListener('pointerdown', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const nx = (e.clientX - rect.left) / rect.width;
+          const ny = (e.clientY - rect.top) / rect.height;
+          if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return;
+          ripples.push({ x: nx, y: 1.0 - ny, t0: (performance.now() - start) / 1000 });
+          if (ripples.length > RIPPLE_MAX) ripples.shift();
+        });
+      }
+
+      if (reduceMotion) {
+        draw(0.0); // 静态单帧，保留“水”的质感但无运动
+      } else {
+        let raf = 0;
+        const loop = (now) => {
+          draw((now - start) / 1000);
+          raf = requestAnimationFrame(loop);
+        };
+        raf = requestAnimationFrame(loop);
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
+          else if (!raf) { raf = requestAnimationFrame(loop); }
+        });
+      }
+      window.addEventListener('resize', resize);
     })();
 
   </script>
