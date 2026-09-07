@@ -158,6 +158,41 @@
     .act-cta { background: var(--bg-soft); text-align: center; }
     .act-cta .btn { margin: 0 8px; }
 
+    /* ===== 手绘风章节插画 =====
+       约束（对齐 brand-v1.7 §9 / §9.1）：珊瑚红单色细线勾勒 + n=3 超椭圆容器 +
+       扁平单线描边，绝不用 3D 渲染；手绘抖动由 SVG feTurbulence 位移滤镜实现。 */
+    .story-illo { margin: 0 auto 32px; max-width: 640px; }
+    .story-illo svg { width: 100%; height: auto; display: block; }
+    .story-illo figcaption { margin-top: 14px; text-align: center; font-size: 0.86rem; line-height: 1.7; color: var(--text-muted); letter-spacing: 0.02em; }
+    /* 线宽四档：主 / 次 / 极细 / 虚线 */
+    .il { fill: none; stroke: var(--brand-700); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .il-thin { fill: none; stroke: var(--brand-700); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82; }
+    .il-hair { fill: none; stroke: var(--brand-700); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; opacity: 0.42; }
+    .il-dash { fill: none; stroke: var(--brand-700); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; stroke-dasharray: 7 7; }
+    .il-soft { fill: rgba(227,79,56,0.10); stroke: none; }
+    .il-shade { fill: rgba(227,79,56,0.10); stroke: none; }
+    .il-plate { fill: var(--bg-soft); stroke: none; }
+    .il-label { font-family: var(--font-num); font-size: 12.5px; fill: var(--text-secondary); letter-spacing: 0.02em; }
+    .il-label-sm { font-family: var(--font-num); font-size: 11px; fill: var(--text-muted); }
+    /* 珊瑚红底版：整幅反白 */
+    .story-illo--inverse .il { stroke: #FDFBF7; }
+    .story-illo--inverse .il-thin { stroke: #FDFBF7; opacity: 0.78; }
+    .story-illo--inverse .il-hair { stroke: #FDFBF7; opacity: 0.38; }
+    /* 红色阴影：珊瑚红底上叠一层更深的红（收尾图内"影"的区域） */
+    .story-illo--inverse .il-shade { fill: rgba(0,0,0,0.17); }
+    .story-illo--inverse .il-soft { fill: rgba(253,251,247,0.13); }
+    .story-illo--inverse .il-plate { fill: rgba(253,251,247,0.06); stroke: rgba(253,251,247,0.26); stroke-width: 1.2; }
+    .story-illo--inverse .il-label { fill: rgba(253,251,247,0.8); }
+    .story-illo--inverse .il-label-sm { fill: rgba(253,251,247,0.62); }
+    .story-illo--inverse figcaption { color: rgba(253,251,247,0.76); }
+    /* 进入视口后逐笔"画"出线条（reduced-motion 下由脚本跳过） */
+    .story-illo [data-draw].il-draw { animation: illoDraw .95s var(--ease-patient) forwards; animation-delay: calc(var(--il-i, 0) * 42ms); }
+    @keyframes illoDraw { to { stroke-dashoffset: 0; } }
+    @media (max-width: 720px) {
+      .story-illo { margin-bottom: 26px; }
+      .story-illo figcaption { font-size: 0.82rem; }
+    }
+
     /* ===== 收尾涟漪（复用 nature 潮间带效果） ===== */
     .story-ripple { background: var(--bg-soft); display: flex; flex-direction: column; align-items: center; gap: 44px; padding: clamp(48px, 8vh, 88px) 0 clamp(12px, 3vh, 28px); }
     .ripple-text { text-align: center; max-width: 640px; padding: 0 24px; }
@@ -232,6 +267,7 @@
       .nautilus-hero, .nautilus-svg { animation: none !important; }
       .nh-septum, .nh-bubble { animation: none !important; }
       .ripple, .ripple-center { animation: none !important; opacity: 1; }
+      .story-illo [data-draw] { animation: none !important; }
       html { scroll-behavior: auto; }
       [data-reveal] { opacity: 1; transform: none; transition: none; }
       .nav-more-menu { transition: none !important; }
@@ -239,6 +275,8 @@
   </style>
 </head>
 <body>
+  <!-- 手绘插画共用母版：n=3 超椭圆容器（Alive 理念 / brand-v1.7 §1.1 §9） -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><path id="illoPlate" d="M630.0,180.0 L629.6,207.6 L628.2,223.7 L626.0,237.2 L622.9,249.0 L618.9,259.8 L614.1,269.6 L608.3,278.7 L601.7,287.1 L594.1,294.9 L585.7,302.1 L576.3,308.8 L566.0,314.9 L554.8,320.6 L542.7,325.7 L529.5,330.3 L515.3,334.5 L500.0,338.1 L483.4,341.3 L465.5,343.9 L445.9,346.1 L424.3,347.8 L399.8,349.0 L370.3,349.8 L320.0,350.0 L269.7,349.8 L240.2,349.0 L215.7,347.8 L194.1,346.1 L174.5,343.9 L156.6,341.3 L140.0,338.1 L124.7,334.5 L110.5,330.3 L97.3,325.7 L85.2,320.6 L74.0,314.9 L63.7,308.8 L54.3,302.1 L45.9,294.9 L38.3,287.1 L31.7,278.7 L25.9,269.6 L21.1,259.8 L17.1,249.0 L14.0,237.2 L11.8,223.7 L10.4,207.6 L10.0,180.0 L10.4,152.4 L11.8,136.3 L14.0,122.8 L17.1,111.0 L21.1,100.2 L25.9,90.4 L31.7,81.3 L38.3,72.9 L45.9,65.1 L54.3,57.9 L63.7,51.2 L74.0,45.1 L85.2,39.4 L97.3,34.3 L110.5,29.7 L124.7,25.5 L140.0,21.9 L156.6,18.7 L174.5,16.1 L194.1,13.9 L215.7,12.2 L240.2,11.0 L269.7,10.2 L320.0,10.0 L370.3,10.2 L399.8,11.0 L424.3,12.2 L445.9,13.9 L465.5,16.1 L483.4,18.7 L500.0,21.9 L515.3,25.5 L529.5,29.7 L542.7,34.3 L554.8,39.4 L566.0,45.1 L576.3,51.2 L585.7,57.9 L594.1,65.1 L601.7,72.9 L608.3,81.3 L614.1,90.4 L618.9,100.2 L622.9,111.0 L626.0,122.8 L628.2,136.3 L629.6,152.4 L630.0,180.0Z"/></defs></svg>
   <!--SHELL_DECO-->
   <nav class="nav" data-reveal>
     <div class="container nav-inner">
@@ -291,6 +329,45 @@
     <!-- 开场白 -->
     <section class="act" data-reveal>
       <div class="container act-inner">
+        <figure class="story-illo" data-illo>
+          <svg viewBox="0 0 640 360" role="img" aria-label="浅海阳光下的珊瑚森林手绘插画">
+            <defs><filter id="illoSk1" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="17" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+            <use href="#illoPlate" class="il-plate"/>
+            <g filter="url(#illoSk1)">
+              <path class="il-hair" d="M118,14 C142,104 162,206 168,300"/>
+              <path class="il-hair" d="M236,8 C258,100 276,204 282,300"/>
+              <path class="il-hair" d="M354,12 C374,104 390,206 396,300"/>
+              <path class="il-hair" d="M468,8 C486,100 500,204 506,300"/>
+              <path class="il" d="M24,50 C96,38 168,62 240,50 C312,38 384,62 456,50 C528,38 588,58 616,50"/>
+              <path class="il-hair" d="M24,66 C96,54 168,78 240,66 C312,54 384,78 456,66 C528,54 588,74 616,66"/>
+              <path class="il" d="M152,320 C150,300 156,290 148,276 C142,264 150,252 144,238"/>
+              <path class="il-thin" d="M151,296 C164,290 170,278 172,266"/>
+              <path class="il-thin" d="M149,286 C136,282 130,270 128,258"/>
+              <path class="il-thin" d="M147,268 C158,262 162,250 163,240"/>
+              <path class="il" d="M302,320 C300,296 308,286 298,264 C291,246 302,232 293,210"/>
+              <path class="il-thin" d="M301,292 C314,286 320,272 322,254"/>
+              <path class="il-thin" d="M300,276 C288,272 282,258 280,242"/>
+              <path class="il-thin" d="M298,252 C310,246 314,234 315,222"/>
+              <path class="il-thin" d="M296,234 C286,230 281,220 280,210"/>
+              <path class="il" d="M470,320 C468,302 474,292 466,276"/>
+              <path class="il-thin" d="M469,300 C483,296 493,284 497,268"/>
+              <path class="il-thin" d="M468,290 C454,288 445,278 441,262"/>
+              <path class="il-thin" d="M466,278 C475,272 479,261 479,251"/>
+              <path class="il" d="M22,320 C110,312 190,326 280,320 C370,314 450,326 540,320 C580,317 610,322 620,320"/>
+              <path class="il-thin" d="M562,306 L566,314 L575,313 L567,319 L571,327 L561,323 L552,327 L555,319 L548,313 L557,314 Z"/>
+              <circle class="il-thin" cx="212" cy="148" r="5"/>
+              <circle class="il-hair" cx="225" cy="118" r="3"/>
+              <circle class="il-hair" cx="205" cy="194" r="3.6"/>
+              <circle class="il-thin" cx="408" cy="168" r="4.6"/>
+              <circle class="il-hair" cx="421" cy="138" r="2.6"/>
+              <path class="il-thin" d="M330,118 C342,110 358,110 370,118 C358,126 342,126 330,118 Z"/>
+              <path class="il-thin" d="M330,118 L321,112 L321,124 Z"/>
+              <path class="il-thin" d="M392,196 C402,190 414,190 424,196 C414,202 402,202 392,196 Z"/>
+              <path class="il-thin" d="M392,196 L385,191 L385,201 Z"/>
+            </g>
+          </svg>
+          <figcaption>{{brandStory.opening.caption}}</figcaption>
+        </figure>
         {{#each brandStory.opening.paragraphs}}<p>{{.}}</p>{{/each}}
       </div>
     </section>
@@ -298,6 +375,35 @@
     <!-- 下潜：镜头到 800 米，遇见鹦鹉螺 -->
     <section class="act" data-reveal>
       <div class="container act-inner">
+        <figure class="story-illo" data-illo>
+          <svg viewBox="0 0 640 360" role="img" aria-label="深度标尺与开口朝上的鹦鹉螺手绘插画">
+            <defs><filter id="illoSk2" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="29" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+            <use href="#illoPlate" class="il-plate"/>
+            <g filter="url(#illoSk2)">
+              <path class="il-hair" d="M152,74 C232,66 312,82 396,74 C480,68 560,80 620,74"/>
+              <path class="il-hair" d="M152,140 C232,132 312,148 396,140 C480,134 560,146 620,140"/>
+              <path class="il-hair" d="M152,206 C232,198 312,214 396,206 C480,200 560,212 620,206"/>
+              <path class="il-hair" d="M152,272 C232,264 312,280 396,272 C480,266 560,278 620,272"/>
+              <path class="il" d="M70,60 L70,300"/>
+              <path class="il-thin" d="M70,74 L94,74 M70,125 L94,125 M70,177 L94,177 M70,228 L94,228 M70,280 L94,280"/>
+              <path class="il-hair" d="M70,99 L84,99 M70,151 L84,151 M70,202 L84,202 M70,254 L84,254"/>
+              <path class="il-thin" d="M62,292 L70,306 L78,292"/>
+              <path class="il-plate" d="M548,190 L547.8,211.4 L547.2,223.8 L546.3,234.2 L544.9,243.4 L543.2,251.6 L541.1,259.2 L538.6,266.1 L535.7,272.5 L532.5,278.4 L528.8,283.8 L524.7,288.8 L520.3,293.4 L515.4,297.5 L510.1,301.2 L504.3,304.5 L498.1,307.3 L491.3,309.8 L483.9,311.9 L475.8,313.5 L466.7,314.7 L456.2,315.5 L442.6,315.9 L417.4,315.9 L403.8,315.5 L393.3,314.7 L384.2,313.5 L376.1,311.9 L368.7,309.8 L361.9,307.3 L355.7,304.5 L349.9,301.2 L344.6,297.5 L339.7,293.4 L335.3,288.8 L331.2,283.8 L327.5,278.4 L324.3,272.5 L321.4,266.1 L318.9,259.2 L316.8,251.6 L315.1,243.4 L313.7,234.2 L312.8,223.8 L312.2,211.4 L312,190 L312.2,168.6 L312.8,156.2 L313.7,145.8 L315.1,136.6 L316.8,128.4 L318.9,120.8 L321.4,113.9 L324.3,107.5 L327.5,101.6 L331.2,96.2 L335.3,91.2 L339.7,86.6 L344.6,82.5 L349.9,78.8 L355.7,75.5 L361.9,72.7 L368.7,70.2 L376.1,68.1 L384.2,66.5 L393.3,65.3 L403.8,64.5 L417.4,64.1 L442.6,64.1 L456.2,64.5 L466.7,65.3 L475.8,66.5 L483.9,68.1 L491.3,70.2 L498.1,72.7 L504.3,75.5 L510.1,78.8 L515.4,82.5 L520.3,86.6 L524.7,91.2 L528.8,96.2 L532.5,101.6 L535.7,107.5 L538.6,113.9 L541.1,120.8 L543.2,128.4 L544.9,136.6 L546.3,145.8 L547.2,156.2 L547.8,168.6 L548,190Z"/>
+              <path class="il" d="M431.1,204.6 L431.4,204.7 L431.8,204.8 L432.1,204.9 L432.5,205.1 L432.8,205.3 L433.1,205.6 L433.4,205.8 L433.6,206.1 L433.8,206.5 L434,206.8 L434.2,207.2 L434.3,207.6 L434.4,208.1 L434.5,208.5 L434.5,208.9 L434.4,209.4 L434.3,209.8 L434.2,210.3 L434,210.7 L433.8,211.2 L433.5,211.6 L433.2,212 L432.9,212.4 L432.5,212.7 L432,213 L431.6,213.3 L431.1,213.5 L430.5,213.6 L430,213.8 L429.4,213.8 L428.8,213.9 L428.2,213.8 L427.6,213.7 L427,213.5 L426.5,213.3 L425.9,213 L425.3,212.7 L424.8,212.3 L424.3,211.8 L423.9,211.3 L423.5,210.7 L423.1,210.1 L422.9,209.5 L422.6,208.8 L422.5,208.1 L422.4,207.3 L422.3,206.5 L422.4,205.8 L422.5,205 L422.7,204.2 L423,203.4 L423.4,202.7 L423.8,202 L424.3,201.3 L424.9,200.6 L425.6,200.1 L426.3,199.5 L427.1,199.1 L428,198.7 L428.9,198.4 L429.8,198.1 L430.8,198 L431.8,197.9 L432.8,198 L433.8,198.2 L434.9,198.4 L435.9,198.8 L436.8,199.3 L437.8,199.8 L438.7,200.5 L439.5,201.3 L440.3,202.1 L441,203.1 L441.7,204.1 L442.2,205.2 L442.6,206.4 L442.9,207.6 L443.1,208.9 L443.2,210.2 L443.1,211.6 L442.9,212.9 L442.6,214.2 L442.1,215.6 L441.5,216.8 L440.8,218.1 L439.9,219.3 L438.9,220.4 L437.8,221.4 L436.6,222.4 L435.2,223.2 L433.8,223.9 L432.2,224.5 L430.6,224.9 L429,225.1 L427.3,225.3 L425.5,225.2 L423.8,225 L422,224.5 L420.3,224 L418.6,223.2 L416.9,222.2 L415.4,221.1 L413.9,219.8 L412.5,218.4 L411.3,216.8 L410.2,215 L409.3,213.1 L408.5,211.1 L407.9,209.1 L407.6,206.9 L407.4,204.7 L407.5,202.4 L407.7,200.1 L408.3,197.8 L409,195.5 L410,193.3 L411.2,191.1 L412.7,189 L414.3,187.1 L416.2,185.3 L418.3,183.6 L420.6,182.2 L423,180.9 L425.6,179.9 L428.3,179.2 L431.2,178.6 L434.1,178.4 L437.1,178.4 L440.1,178.8 L443.1,179.4 L446.1,180.4 L449,181.6 L451.9,183.2 L454.6,185.1 L457.1,187.2 L459.5,189.7 L461.7,192.4 L463.6,195.3 L465.3,198.5 L466.7,201.9 L467.7,205.4 L468.4,209.1 L468.8,213 L468.7,216.9 L468.3,220.8 L467.5,224.8 L466.3,228.7 L464.7,232.5 L462.7,236.3 L460.3,239.8 L457.5,243.2 L454.4,246.4 L450.8,249.3 L447,251.8 L442.9,254 L438.5,255.9 L433.8,257.3 L429,258.3 L424,258.8 L418.9,258.8 L413.7,258.3 L408.6,257.3 L403.4,255.8 L398.4,253.7 L393.5,251.1 L388.7,248 L384.3,244.4 L380.1,240.4 L376.3,235.8 L372.9,230.8 L370,225.4 L367.5,219.7 L365.6,213.7 L364.3,207.3 L363.5,200.8 L363.4,194.2 L364,187.4 L365.2,180.6 L367.2,173.9 L369.8,167.2 L373.1,160.8 L377.1,154.6 L381.7,148.7 L387,143.2 L392.9,138.1 L399.4,133.6 L406.4,129.7 L413.9,126.4 L421.8,123.8 L430,122"/>
+              <path class="il-thin" d="M433.6,206.1 L431.2,207.4 M434.4,209.3 L431.5,208.4 M432.6,212.6 L430.9,209.6 M428.4,213.8 L429.5,210 M424.1,211.5 L428,209.2 M422.3,206.2 L427.4,207.4 M425.2,200.4 L428.4,205.4 M432.1,198 L430.7,204.6 M439.7,201.5 L433.3,205.8 M443.2,210.4 L434.5,208.8 M438.8,220.5 L433,212.2 M427.3,225.3 L429.1,213.9 M414,219.9 L424.6,212.1 M407.4,205 L422.3,207 M413.9,187.6 L424.5,201.1 M433.1,178.4 L431.1,198 M456.1,186.3 L438.9,200.6 M468.6,211 L443.1,209 M459.2,241.3 L439.9,219.3 M427.4,258.5 L429.1,225.1 M387.6,247.2 L415.6,221.3 M364.1,206.3 L407.6,207.4 M377.5,154.1 L412.2,189.7 M430,122 L430,178.8"/>
+              <path class="il" d="M430,122 Q497.1,144.4 430,178.8"/>
+              <path class="il-thin" d="M412,142 C400,118 396,108 404,94 M422,138 C416,112 420,100 426,86 M433,138 C436,112 443,102 450,90 M444,142 C456,120 466,112 478,102"/>
+              <circle class="il-hair" cx="570" cy="230" r="4"/>
+              <circle class="il-hair" cx="584" cy="176" r="2.8"/>
+              <circle class="il-hair" cx="562" cy="128" r="3.4"/>
+            </g>
+            <g>
+              <text class="il-label" x="104" y="70">0m</text>
+              <text class="il-label" x="104" y="280">800m</text>
+            </g>
+          </svg>
+          <figcaption>{{brandStory.dive.caption}}</figcaption>
+        </figure>
         {{#each brandStory.dive.paragraphs}}<p>{{.}}</p>{{/each}}
       </div>
     </section>
@@ -305,6 +411,34 @@
     <!-- 隐喻：我们都是潜入自己深海的人 -->
     <section class="act" data-reveal>
       <div class="container act-inner">
+        <figure class="story-illo" data-illo>
+          <svg viewBox="0 0 640 360" role="img" aria-label="海面风浪与深海中开口朝上的鹦鹉螺手绘插画">
+            <defs><filter id="illoSk3" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+            <use href="#illoPlate" class="il-plate"/>
+            <g filter="url(#illoSk3)">
+              <path class="il-hair" d="M118,26 C134,44 148,62 160,80"/>
+              <path class="il-hair" d="M196,18 C212,38 226,58 238,76"/>
+              <path class="il-hair" d="M286,22 C302,42 316,62 328,82"/>
+              <path class="il-hair" d="M386,16 C402,36 416,56 428,74"/>
+              <path class="il-hair" d="M486,24 C502,44 516,64 528,84"/>
+              <path class="il" d="M20,120 C64,88 108,132 152,104 C196,76 240,124 284,98 C328,72 372,120 416,96"/>
+              <path class="il-thin" d="M20,146 C64,116 108,158 152,132 C196,106 240,150 284,126"/>
+              <path class="il" d="M440,98 C468,72 506,78 518,106 C524,120 516,133 501,131"/>
+              <path class="il-thin" d="M452,111 C472,95 496,99 505,115"/>
+              <path class="il" d="M18,176 C120,168 240,184 360,176 C480,168 580,182 622,176"/>
+              <path class="il-plate" d="M364,258 L363.8,268.4 L363.4,274.5 L362.5,279.5 L361.4,283.9 L360,287.8 L358.2,291.3 L356.1,294.5 L353.7,297.3 L350.9,299.9 L347.8,302.1 L344.3,304.1 L340.5,305.8 L336.2,307.2 L331.4,308.3 L326,309.1 L319.7,309.7 L311.6,310 L296.4,310 L288.3,309.7 L282,309.1 L276.6,308.3 L271.8,307.2 L267.5,305.8 L263.7,304.1 L260.2,302.1 L257.1,299.9 L254.3,297.3 L251.9,294.5 L249.8,291.3 L248,287.8 L246.6,283.9 L245.5,279.5 L244.6,274.5 L244.2,268.4 L244,258 L244.2,247.6 L244.6,241.5 L245.5,236.5 L246.6,232.1 L248,228.2 L249.8,224.7 L251.9,221.5 L254.3,218.7 L257.1,216.1 L260.2,213.9 L263.7,211.9 L267.5,210.2 L271.8,208.8 L276.6,207.7 L282,206.9 L288.3,206.3 L296.4,206 L311.6,206 L319.7,206.3 L326,206.9 L331.4,207.7 L336.2,208.8 L340.5,210.2 L344.3,211.9 L347.8,213.9 L350.9,216.1 L353.7,218.7 L356.1,221.5 L358.2,224.7 L360,228.2 L361.4,232.1 L362.5,236.5 L363.4,241.5 L363.8,247.6 L364,258Z"/>
+              <path class="il" d="M306,256.6 L305.9,256.9 L305.9,257.1 L305.8,257.3 L305.6,257.6 L305.5,257.8 L305.3,258 L305.1,258.2 L304.8,258.3 L304.6,258.4 L304.3,258.5 L304,258.6 L303.7,258.7 L303.4,258.7 L303.1,258.6 L302.8,258.6 L302.5,258.5 L302.2,258.3 L301.9,258.2 L301.6,257.9 L301.3,257.7 L301.1,257.4 L300.9,257.1 L300.7,256.8 L300.6,256.4 L300.5,256 L300.4,255.6 L300.4,255.2 L300.5,254.8 L300.6,254.3 L300.7,253.9 L300.9,253.5 L301.1,253.1 L301.4,252.7 L301.8,252.4 L302.2,252.1 L302.6,251.8 L303,251.6 L303.5,251.4 L304.1,251.3 L304.6,251.2 L305.2,251.2 L305.7,251.3 L306.3,251.4 L306.9,251.6 L307.4,251.9 L307.9,252.2 L308.4,252.6 L308.9,253.1 L309.3,253.6 L309.6,254.2 L309.9,254.8 L310.2,255.5 L310.3,256.2 L310.4,256.9 L310.4,257.6 L310.3,258.4 L310.1,259.2 L309.8,259.9 L309.5,260.6 L309,261.3 L308.5,262 L307.8,262.6 L307.1,263.1 L306.4,263.6 L305.5,264 L304.6,264.3 L303.7,264.4 L302.7,264.5 L301.7,264.5 L300.7,264.4 L299.7,264.1 L298.7,263.7 L297.7,263.2 L296.8,262.6 L295.9,261.9 L295.1,261 L294.4,260.1 L293.8,259 L293.3,257.9 L292.9,256.7 L292.7,255.4 L292.6,254.1 L292.6,252.8 L292.8,251.4 L293.2,250.1 L293.7,248.7 L294.4,247.4 L295.3,246.2 L296.3,245.1 L297.4,244 L298.7,243.1 L300.1,242.3 L301.6,241.6 L303.3,241.1 L305,240.8 L306.7,240.7 L308.5,240.8 L310.3,241.1 L312.1,241.6 L313.9,242.4 L315.6,243.3 L317.3,244.5 L318.8,245.8 L320.2,247.4 L321.4,249.1 L322.5,251 L323.3,253.1 L323.9,255.2 L324.3,257.5 L324.4,259.9 L324.3,262.3 L323.8,264.7 L323.1,267.1 L322.1,269.5 L320.8,271.8 L319.2,274 L317.4,276 L315.3,277.8 L312.9,279.4 L310.4,280.8 L307.6,281.9 L304.7,282.7 L301.6,283.2 L298.4,283.3 L295.2,283.1 L292,282.4 L288.7,281.4 L285.6,280.1 L282.5,278.3 L279.7,276.1 L277,273.6 L274.6,270.8 L272.4,267.6 L270.6,264.1 L269.2,260.4 L268.2,256.5 L267.6,252.3 L267.5,248.1 L267.9,243.8 L268.8,239.4 L270.2,235.1 L272.1,230.9 L274.5,226.9 L277.4,223 L280.8,219.5 L284.7,216.3 L289,213.5 L293.7,211.1 L298.7,209.3 L304,208"/>
+              <path class="il-thin" d="M304.5,258.5 L304.2,256.8 M301.7,258 L303.3,256.6 M300.5,254.7 L302.9,255.6 M303.3,251.5 L303.8,254.6 M308.4,252.6 L305.4,254.9 M310.2,258.6 L306,256.8 M305,264.2 L304.3,258.6 M295.9,261.9 L301.5,257.8 M293,250.9 L300.5,254.4 M302.8,241.3 L303.6,251.4 M319,246 L308.7,252.9 M323.5,265.9 L310.1,259.1 M305,282.6 L304.3,264.3 M276.4,272.9 L295.4,261.3 M269.6,236.7 L293.2,250 M304,208 L304,241"/>
+              <path class="il" d="M304,208 Q341.4,220.5 304,241"/>
+              <path class="il-thin" d="M294,219.2 C287.3,205.8 285,200.2 289.5,192.4 M299.5,216.9 C296.2,202.4 298.4,195.7 301.8,187.9 M305.7,216.9 C307.3,202.4 311.3,196.8 315.2,190.1 M311.8,219.2 C318.5,206.9 324.1,202.4 330.8,196.8"/>
+              <path class="il-thin" d="M40,318 C140,302 200,336 300,322 C400,308 470,336 596,318"/>
+              <path class="il-thin" d="M582,311 L596,318 L582,325"/>
+              <path class="il-hair" d="M60,344 C160,332 220,354 320,344 C420,334 490,352 596,342"/>
+              <path class="il-hair" d="M584,335 L596,342 L584,349"/>
+            </g>
+          </svg>
+          <figcaption>{{brandStory.metaphor.caption}}</figcaption>
+        </figure>
         {{#each brandStory.metaphor.paragraphs}}<p>{{.}}</p>{{/each}}
       </div>
     </section>
@@ -319,6 +453,33 @@
     <!-- 起点：算不清自己的账 -->
     <section class="act" data-reveal>
       <div class="container act-inner">
+        <figure class="story-illo" data-illo>
+          <svg viewBox="0 0 640 360" role="img" aria-label="多个账户的交易记录汇成一条带波动的复利曲线手绘插画">
+            <defs><filter id="illoSk5" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+            <use href="#illoPlate" class="il-plate"/>
+            <g filter="url(#illoSk5)">
+              <rect class="il-thin" x="42" y="84" width="152" height="56" rx="10"/>
+              <path class="il-hair" d="M58,104 C86,100 118,108 142,102"/>
+              <path class="il-hair" d="M58,118 C88,114 112,122 130,116"/>
+              <rect class="il-thin" x="42" y="152" width="152" height="56" rx="10"/>
+              <path class="il-hair" d="M58,172 C86,168 118,176 142,170"/>
+              <path class="il-hair" d="M58,186 C88,182 112,190 130,184"/>
+              <rect class="il-thin" x="42" y="220" width="152" height="56" rx="10"/>
+              <path class="il-hair" d="M58,240 C86,236 118,244 142,238"/>
+              <path class="il-hair" d="M58,254 C88,250 112,258 130,252"/>
+              <path class="il" d="M206,180 C246,180 258,180 292,180"/>
+              <path class="il" d="M280,170 L294,180 L280,190"/>
+              <path class="il-thin" d="M316,300 L316,64"/>
+              <path class="il-thin" d="M316,300 L604,300"/>
+              <path class="il" d="M316,288 L319.8,278.5 L323.6,288.2 L327.4,283.6 L331.1,267.8 L334.9,267.5 L338.7,264 L342.5,257.7 L346.3,253.5 L350.1,253.4 L353.8,249.2 L357.6,239.7 L361.4,235.8 L365.2,223.9 L369,221.6 L372.8,221.3 L376.5,219.3 L380.3,212.7 L384.1,211.1 L387.9,210.4 L391.7,205.5 L395.5,189.5 L399.2,181 L403,181 L406.8,183.6 L410.6,180.3 L414.4,176 L418.2,169.4 L421.9,170.2 L425.7,163.3 L429.5,165.2 L433.3,168.9 L437.1,168.9 L440.9,167.3 L444.6,166.2 L448.4,157.9 L452.2,157 L456,171.2 L459.8,176 L463.6,181.6 L467.4,181.5 L471.1,183 L474.9,174.8 L478.7,177.6 L482.5,169.3 L486.3,165.5 L490.1,167.7 L493.8,167.3 L497.6,165.2 L501.4,168.8 L505.2,163.2 L509,163.8 L512.8,162.6 L516.5,159.9 L520.3,162.4 L524.1,163.1 L527.9,159.3 L531.7,149 L535.5,144.6 L539.2,151.7 L543,141.2 L546.8,133.3 L550.6,131.6 L554.4,127.7 L558.2,127 L561.9,121.6 L565.7,119 L569.5,114.3 L573.3,105.8 L577.1,100.4 L580.9,99.6 L584.6,99.2 L588.4,100.1 L592.2,99.1 L596,92"/>
+              <circle class="il" cx="596" cy="92" r="5"/>
+            </g>
+            <g>
+              <text class="il-label" x="540" y="74">复利</text>
+            </g>
+          </svg>
+          <figcaption>{{brandStory.origin.caption}}</figcaption>
+        </figure>
         {{#each brandStory.origin.paragraphs}}<p>{{.}}</p>{{/each}}
       </div>
     </section>
@@ -326,11 +487,69 @@
     <!-- 朋友案例 -->
     <section class="act" data-reveal>
       <div class="container act-inner">
+        <figure class="story-illo" data-illo>
+          <svg viewBox="0 0 640 360" role="img" aria-label="宣称收益、定存收益与真实收益三条线对比手绘插画">
+            <defs><filter id="illoSk6" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="79" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+            <use href="#illoPlate" class="il-plate"/>
+            <g filter="url(#illoSk6)">
+              <path class="il-thin" d="M96,296 L96,70"/>
+              <path class="il-thin" d="M96,296 L604,296"/>
+              <path class="il-dash" d="M118,286 L432,110"/>
+              <path class="il-thin" d="M118,286 L432,208"/>
+              <path class="il" d="M118,286 C240,274 350,260 432,248"/>
+              <circle class="il-thin" cx="432" cy="248" r="5"/>
+            </g>
+            <g>
+              <text class="il-label" x="450" y="116">宣称</text>
+              <text class="il-label" x="450" y="206">定存</text>
+              <text class="il-label" x="450" y="252">实际</text>
+            </g>
+          </svg>
+          <figcaption>{{brandStory.friend.caption}}</figcaption>
+        </figure>
         {{#each brandStory.friend.paragraphs}}<p>{{.}}</p>{{/each}}
       </div>
     </section>
 
-    <!-- 收尾：气室刻度的标尺（韵脚顺接到下方涟漪区） -->
+    <!-- 收尾插画：账本与复利（浅底，与下方红底韵脚区分） -->
+    <section class="act" data-reveal>
+      <div class="container act-inner">
+        <figure class="story-illo" data-illo>
+          <svg viewBox="0 0 640 360" role="img" aria-label="打开的账本上长出一条带波动的复利曲线手绘插画">
+            <defs><filter id="illoSk7" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="3" seed="91" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+            <use href="#illoPlate" class="il-plate"/>
+            <path class="il-shade" d="M416,214 L415.8,232.7 L415.3,243.6 L414.4,252.7 L413.1,260.8 L411.4,268.1 L409.4,274.9 L407,281.2 L404.3,287 L401.2,292.5 L397.7,297.6 L393.9,302.4 L389.6,306.9 L385,311.1 L380.1,314.9 L374.7,318.5 L368.9,321.8 L362.7,324.9 L356.1,327.6 L349.1,330.1 L341.5,332.3 L333.5,334.2 L324.8,335.9 L315.4,337.2 L305.2,338.3 L293.8,339.1 L280.6,339.7 L263.7,340 L232.3,340 L215.4,339.7 L202.2,339.1 L190.8,338.3 L180.6,337.2 L171.2,335.9 L162.5,334.2 L154.5,332.3 L146.9,330.1 L139.9,327.6 L133.3,324.9 L127.1,321.8 L121.3,318.5 L115.9,314.9 L111,311.1 L106.4,306.9 L102.1,302.4 L98.3,297.6 L94.8,292.5 L91.7,287 L89,281.2 L86.6,274.9 L84.6,268.1 L82.9,260.8 L81.6,252.7 L80.7,243.6 L80.2,232.7 L80,214 L80.2,195.3 L80.7,184.4 L81.6,175.3 L82.9,167.2 L84.6,159.9 L86.6,153.1 L89,146.8 L91.7,141 L94.8,135.5 L98.3,130.4 L102.1,125.6 L106.4,121.1 L111,116.9 L115.9,113.1 L121.3,109.5 L127.1,106.2 L133.3,103.1 L139.9,100.4 L146.9,97.9 L154.5,95.7 L162.5,93.8 L171.2,92.1 L180.6,90.8 L190.8,89.7 L202.2,88.9 L215.4,88.3 L232.3,88 L263.7,88 L280.6,88.3 L293.8,88.9 L305.2,89.7 L315.4,90.8 L324.8,92.1 L333.5,93.8 L341.5,95.7 L349.1,97.9 L356.1,100.4 L362.7,103.1 L368.9,106.2 L374.7,109.5 L380.1,113.1 L385,116.9 L389.6,121.1 L393.9,125.6 L397.7,130.4 L401.2,135.5 L404.3,141 L407,146.8 L409.4,153.1 L411.4,159.9 L413.1,167.2 L414.4,175.3 L415.3,184.4 L415.8,195.3 L416,214Z"/>
+            <g filter="url(#illoSk7)">
+              <!-- 账本：左页 -->
+              <path class="il" d="M245,196 C208,180 164,177 122,187"/>
+              <path class="il" d="M122,187 L122,272"/>
+              <path class="il-thin" d="M122,272 C164,282 208,290 245,300"/>
+              <!-- 账本：右页 -->
+              <path class="il" d="M245,196 C282,180 326,177 368,187"/>
+              <path class="il" d="M368,187 L368,272"/>
+              <path class="il-thin" d="M368,272 C326,282 282,290 245,300"/>
+              <!-- 书脊与厚度 -->
+              <path class="il" d="M245,196 L245,300"/>
+              <path class="il-thin" d="M122,272 L122,280 M368,272 L368,280"/>
+              <path class="il-hair" d="M122,280 C164,290 208,298 245,308 C282,298 326,290 368,280"/>
+              <!-- 左页横线 -->
+              <path class="il-hair" d="M146,212 C174,203 204,200 228,203"/>
+              <path class="il-hair" d="M146,230 C174,221 204,218 228,221"/>
+              <path class="il-hair" d="M146,248 C174,239 204,236 228,239"/>
+              <path class="il-hair" d="M146,266 C174,257 204,254 228,257"/>
+              <!-- 右页：商标戳印（超椭圆 + 螺线） -->
+              <path class="il-thin" d="M345,232 L344.9,237.1 L344.7,240.1 L344.2,242.5 L343.7,244.6 L342.9,246.5 L342,248.1 L340.9,249.6 L339.6,250.9 L338.1,252 L336.5,252.9 L334.6,253.7 L332.5,254.2 L330.1,254.7 L327.1,254.9 L322,255 L316.9,254.9 L313.9,254.7 L311.5,254.2 L309.4,253.7 L307.5,252.9 L305.9,252 L304.4,250.9 L303.1,249.6 L302,248.1 L301.1,246.5 L300.3,244.6 L299.8,242.5 L299.3,240.1 L299.1,237.1 L299,232 L299.1,226.9 L299.3,223.9 L299.8,221.5 L300.3,219.4 L301.1,217.5 L302,215.9 L303.1,214.4 L304.4,213.1 L305.9,212 L307.5,211.1 L309.4,210.3 L311.5,209.8 L313.9,209.3 L316.9,209.1 L322,209 L327.1,209.1 L330.1,209.3 L332.5,209.8 L334.6,210.3 L336.5,211.1 L338.1,212 L339.6,213.1 L340.9,214.4 L342,215.9 L342.9,217.5 L343.7,219.4 L344.2,221.5 L344.7,223.9 L344.9,226.9 L345,232Z"/>
+              <path class="il-thin" d="M322.6,231.2 L322.7,231.2 L322.8,231.3 L322.9,231.4 L323,231.5 L323.1,231.6 L323.1,231.7 L323.2,231.8 L323.2,231.9 L323.3,232 L323.3,232.2 L323.3,232.3 L323.3,232.5 L323.2,232.6 L323.2,232.8 L323.1,232.9 L323,233 L322.9,233.2 L322.8,233.3 L322.7,233.4 L322.5,233.5 L322.4,233.6 L322.2,233.7 L322,233.7 L321.8,233.8 L321.6,233.8 L321.4,233.8 L321.2,233.7 L321,233.7 L320.8,233.6 L320.6,233.5 L320.4,233.4 L320.3,233.2 L320.1,233 L320,232.8 L319.8,232.6 L319.7,232.4 L319.6,232.2 L319.6,231.9 L319.5,231.6 L319.5,231.4 L319.6,231.1 L319.6,230.8 L319.7,230.5 L319.9,230.2 L320,230 L320.2,229.7 L320.4,229.5 L320.7,229.3 L321,229.1 L321.3,228.9 L321.6,228.8 L322,228.7 L322.3,228.6 L322.7,228.6 L323.1,228.6 L323.5,228.7 L323.9,228.8 L324.3,228.9 L324.7,229.1 L325,229.4 L325.4,229.7 L325.7,230 L326,230.4 L326.2,230.8 L326.4,231.2 L326.6,231.7 L326.7,232.2 L326.7,232.7 L326.7,233.3 L326.7,233.8 L326.6,234.4 L326.4,234.9 L326.1,235.5 L325.8,236 L325.4,236.5 L325,236.9 L324.5,237.3 L324,237.7 L323.4,238 L322.7,238.3 L322,238.5 L321.3,238.6 L320.6,238.6 L319.8,238.6 L319.1,238.4 L318.3,238.2 L317.5,237.9 L316.8,237.5 L316.1,237 L315.5,236.5 L314.9,235.8 L314.3,235.1 L313.8,234.3 L313.4,233.4 L313.1,232.5 L312.9,231.5 L312.8,230.5 L312.8,229.5 L313,228.4 L313.2,227.4 L313.6,226.3 L314.1,225.3 L314.7,224.3 L315.4,223.3 L316.2,222.4 L317.2,221.6 L318.3,220.9 L319.4,220.3 L320.7,219.9 L322,219.5"/>
+              <path class="il" d="M300,268 L304,269.1 L308,271.3 L312,268.3 L316,265.7 L320,256.7 L324,264.2 L328,257.7 L332,261.1 L336,253.9 L340,247.2 L344,247.4 L348,242.7 L352,241.3 L356,241.4 L360,241.7 L364,237.9 L368,229.8 L372,217.4 L376,215.1 L380,217 L384,216.4 L388,218.4 L392,203.7 L396,193.2 L400,192.5 L404,188.6 L408,188.3 L412,186.8 L416,190.6 L420,187.9 L424,190 L428,184.3 L432,175.9 L436,166.3 L440,163.7 L444,157.8 L448,161.9 L452,153 L456,149.4 L460,149.1 L464,147.7 L468,151.4 L472,137.9 L476,134 L480,129.4 L484,126.7 L488,131.5 L492,129.4 L496,125.5 L500,122.3 L504,132.2 L508,130.6 L512,133.2 L516,129.4 L520,135.6 L524,132.6 L528,127.6 L532,130.3 L536,127.8 L540,122.6 L544,122.9 L548,131.5 L552,124.1 L556,124.8 L560,126.2 L564,133.4 L568,123.9 L572,112.1 L576,106.8 L580,104.9 L584,99.7 L588,92"/>
+              <path class="il" d="M588,92 L566,102 M588,92 L578,113"/>
+            </g>
+          </svg>
+          <figcaption>{{brandStory.closing.caption}}</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 收尾韵脚：珊瑚红底，顺接到下方涟漪区 -->
     <section class="act-coral" data-reveal>
       <div class="act-inner">
         {{#each brandStory.closing.paragraphs}}<p>{{.}}</p>{{/each}}
@@ -400,6 +619,44 @@
       }
     }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
     document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+
+    // 章节插画：进入视口后逐笔"画"出手绘线条（reduced-motion 下直接完整显示）
+    (function inkIllustrations() {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const svgs = Array.prototype.slice.call(document.querySelectorAll('[data-illo] svg'));
+      if (reduce || !svgs.length) return;
+      const groups = svgs.map(function (svg) {
+        const strokes = [];
+        svg.querySelectorAll('path, circle, rect').forEach(function (el) {
+          const cls = el.getAttribute('class') || '';
+          if (/il-plate|il-shade|il-soft|il-dash/.test(cls)) return;   // 纯填充块与虚线不参与描线
+          let len = 0;
+          try { len = el.getTotalLength(); } catch (e) { return; }
+          if (!len || !isFinite(len)) return;
+          el.style.strokeDasharray = len + 'px';
+          el.style.strokeDashoffset = len + 'px';
+          strokes.push(el);
+        });
+        return { svg: svg, strokes: strokes };
+      });
+      function ink(g) {
+        g.strokes.forEach(function (el, i) {
+          el.style.setProperty('--il-i', i);
+          el.setAttribute('data-draw', '');
+          el.classList.add('il-draw');
+        });
+      }
+      if (!('IntersectionObserver' in window)) { groups.forEach(ink); return; }
+      const io = new IntersectionObserver(function (entries) {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const g = groups.filter(function (x) { return x.svg === e.target; })[0];
+          if (g) ink(g);
+          io.unobserve(e.target);
+        }
+      }, { threshold: 0.2 });
+      groups.forEach(function (g) { io.observe(g.svg); });
+    })();
 
     // Story 页：技术图纸风格鹦鹉螺 — 同心圆 + 黄金矩形 + 公式标注
     (function buildBlueprintNautilus() {
